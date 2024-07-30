@@ -9,6 +9,10 @@ router.put(
   "/communitycenter/:id",
   CommunityCenterController.updateCommunityCenter
 );
+router.put(
+  "/update/people/:id",
+  CommunityCenterController.updateQuantityPeopleCommunityCenter
+);
 router.delete(
   "/communitycenter/:id",
   CommunityCenterController.deleteCommunityCenter

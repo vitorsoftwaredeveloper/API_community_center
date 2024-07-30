@@ -7,6 +7,7 @@ const communityCenterSchema = mongoose.Schema(
     address: { type: String, require: true },
     localization: { type: String, require: true },
     maxNumberPeople: { type: Number, require: true },
+    quantityPeopleOccupation: { type: Number, default: 0 },
     resource: [
       {
         quantity: { type: Number, require: true },
