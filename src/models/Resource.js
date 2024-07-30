@@ -4,7 +4,7 @@ const resourceSchema = mongoose.Schema(
   {
     id: { type: String },
     item: { type: String, require: true },
-    points: { type: Int8Array, require: true },
+    points: { type: Number, require: true },
   },
   {
     versionKey: false,
