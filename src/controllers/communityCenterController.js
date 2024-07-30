@@ -35,16 +35,30 @@ class CommunityCenterController {
     });
   };
 
+  static updateCommunityCenter = (req, res) => {
+    const { id } = req.params;
+
+    communitycenter.findByIdAndUpdate(id, { $set: req.body }, (err) => {
+      if (err) {
+        res
+          .status(500)
+          .send({ message: `${err.message} - falha na atualização do autor` });
+      } else {
+        res
+          .status(200)
+          .send({ message: "Centro comunitárioo atualizado com sucesso" });
+      }
+    });
+  };
+
   static deleteCommunityCenter = (req, res) => {
     const { id } = req.params;
 
     communitycenter.findByIdAndRemove(id, (err) => {
       if (err) {
-        res
-          .status(500)
-          .send({
-            message: `${err.message} - falha na remoção do centro comunitário`,
-          });
+        res.status(500).send({
+          message: `${err.message} - falha na remoção do centro comunitário`,
+        });
       } else {
         res.status(204).send();
       }

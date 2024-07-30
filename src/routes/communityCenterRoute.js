@@ -5,6 +5,10 @@ const router = express.Router();
 
 router.get("/communitycenter", CommunityCenterController.listCommunityCenters);
 router.post("/communitycenter", CommunityCenterController.saveCommunityCenter);
+router.put(
+  "/communitycenter/:id",
+  CommunityCenterController.updateCommunityCenter
+);
 router.delete(
   "/communitycenter/:id",
   CommunityCenterController.deleteCommunityCenter
