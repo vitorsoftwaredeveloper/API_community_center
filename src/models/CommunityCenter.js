@@ -9,9 +9,12 @@ const communityCenterSchema = mongoose.Schema(
     maxNumberPeople: { type: Number, require: true },
     resource: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "resource",
-        required: true,
+        quantity: { type: Number, require: true },
+        refItem: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "resource",
+          required: true,
+        },
       },
     ],
   },

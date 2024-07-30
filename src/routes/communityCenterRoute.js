@@ -4,5 +4,6 @@ import CommunityCenterController from "../controllers/communityCenterController.
 const router = express.Router();
 
 router.get("/communitycenter", CommunityCenterController.listCommunityCenters);
+router.post("/communitycenter", CommunityCenterController.saveCommunityCenter);
 
 export default router;
