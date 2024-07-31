@@ -47,7 +47,7 @@ class CommunityCenterController {
       communitycenter.findByIdAndUpdate(
         idCommunity,
         { $set: req.body },
-        async (err) => {
+        (err) => {
           if (err) {
             res.status(500).send({
               message: `${err.message} - falha na atualização na quantidade de pessoas do Centro comunitário`,
