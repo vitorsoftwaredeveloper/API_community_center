@@ -1,4 +1,5 @@
 import { communitycenter } from "../models/CommunityCenter.js";
+import { resource } from "../models/Resource.js";
 
 class CommunityCenterController {
   static listCommunityCenters = async (req, res) => {
@@ -23,6 +24,50 @@ class CommunityCenterController {
         return percentageOccupancyCenter >= percentageAcceptableCenter;
       })
     );
+  };
+
+  static calcAverageItemsFromCommunityCenters = async (req, res) => {
+    const listCenter = await communitycenter.find({});
+
+    if (listCenter.length === 0) {
+      return res.status(400).send({ message: "Não há centros cadastrados!" });
+    }
+
+    const listItems = {};
+
+    listCenter.forEach((center) => {
+      center.resource.forEach((resource) => {
+        if (listItems[`${resource.refItem}`] === undefined) {
+          listItems[`${resource.refItem}`] = resource.quantity;
+        } else {
+          listItems[`${resource.refItem}`] += resource.quantity;
+        }
+      });
+    });
+
+    const listResource = await resource
+      .find()
+      .where("_id")
+      .in(Object.keys(listItems));
+
+    const formatListAverage = [];
+
+    for (const [key, value] of Object.entries(listItems)) {
+      const resource = listResource.find((item) => key === item._id.toString());
+
+      formatListAverage.push({
+        item: resource.item,
+        average: value / listCenter.length,
+      });
+    }
+
+    const formatStringResponse = formatListAverage.reduce((acc, resource) => {
+      return (acc += `${resource.average} ${resource.item}, `);
+    }, "");
+
+    return res
+      .status(200)
+      .send({ message: formatStringResponse.trim() + " por centro." });
   };
 
   static saveCommunityCenter = (req, res) => {

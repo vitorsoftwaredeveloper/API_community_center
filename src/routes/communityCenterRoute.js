@@ -8,6 +8,10 @@ router.get(
   "/communitycenter/stuffed",
   CommunityCenterController.listCommunityCentersOccupationStuffed
 );
+router.get(
+  "/communitycenter/averageitems",
+  CommunityCenterController.calcAverageItemsFromCommunityCenters
+);
 router.post("/communitycenter", CommunityCenterController.saveCommunityCenter);
 router.put(
   "/communitycenter/:id",
