@@ -209,15 +209,34 @@ class HistoricController {
         resourceCCTwo
       );
 
-    if (sumPointsExchangeCenterOne !== sumPointsExchangeCenterTwo) {
+    // se o centro possuir sua ocupação maior que 90% ele pode efetuar o intercâmbio sem levar em consideração a soma dos pontos dos itens solicitados
+
+    const percentageAcceptableCenterOne = parseInt(
+      centerOne.maxNumberPeople * 0.9
+    );
+    const percentageAcceptableCenterTwo = parseInt(
+      centerTwo.maxNumberPeople * 0.9
+    );
+
+    const percentageOccupancyCenterOne = parseInt(
+      centerOne.quantityPeopleOccupation * 0.9
+    );
+    const percentageOccupancyCenterTwo = parseInt(
+      centerTwo.quantityPeopleOccupation * 0.9
+    );
+
+    const ignoreSumPointsFromItemsIfCenterHas90PercentageOccupation =
+      percentageAcceptableCenterOne >= percentageOccupancyCenterOne ||
+      percentageAcceptableCenterTwo >= percentageOccupancyCenterTwo;
+
+    if (
+      !ignoreSumPointsFromItemsIfCenterHas90PercentageOccupation &&
+      sumPointsExchangeCenterOne !== sumPointsExchangeCenterTwo
+    ) {
       return res.status(400).send({
         message: `Centros comunitários '${centerOne.name}' e '${centerTwo.name}' não possuem recursos equiparáveis para intercâmbio!`,
       });
     }
-
-    // se o centro possuir sua ocupação maior que 90% da sua quantidade maxima ele pode barganhar com o outro centro com o que tem
-    const occupancyPercentageOne = centerOne.quantityPeopleOccupation * 0.9;
-    const occupancyPercentageTwo = centerTwo.quantityPeopleOccupation * 0.9;
 
     // decrescer a quantidade de itens que sairão o centro comunitário
 
