@@ -226,8 +226,8 @@ class HistoricController {
     );
 
     const ignoreSumPointsFromItemsIfCenterHas90PercentageOccupation =
-      percentageAcceptableCenterOne >= percentageOccupancyCenterOne ||
-      percentageAcceptableCenterTwo >= percentageOccupancyCenterTwo;
+      percentageOccupancyCenterOne >= percentageAcceptableCenterOne ||
+      percentageOccupancyCenterTwo >= percentageAcceptableCenterTwo;
 
     if (
       !ignoreSumPointsFromItemsIfCenterHas90PercentageOccupation &&

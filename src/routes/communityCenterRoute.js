@@ -4,6 +4,10 @@ import CommunityCenterController from "../controllers/communityCenterController.
 const router = express.Router();
 
 router.get("/communitycenter", CommunityCenterController.listCommunityCenters);
+router.get(
+  "/communitycenter/stuffed",
+  CommunityCenterController.listCommunityCentersOccupationStuffed
+);
 router.post("/communitycenter", CommunityCenterController.saveCommunityCenter);
 router.put(
   "/communitycenter/:id",

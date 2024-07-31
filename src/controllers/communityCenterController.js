@@ -7,6 +7,24 @@ class CommunityCenterController {
     });
   };
 
+  static listCommunityCentersOccupationStuffed = async (req, res) => {
+    const listCenter = await communitycenter.find();
+
+    res.status(200).json(
+      listCenter.filter((center) => {
+        const percentageAcceptableCenter = parseInt(
+          center.maxNumberPeople * 0.9
+        );
+
+        const percentageOccupancyCenter = parseInt(
+          center.quantityPeopleOccupation * 0.9
+        );
+
+        return percentageOccupancyCenter >= percentageAcceptableCenter;
+      })
+    );
+  };
+
   static saveCommunityCenter = (req, res) => {
     const newCommunityCenter = new communitycenter(req.body);
 
