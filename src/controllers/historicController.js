@@ -19,6 +19,88 @@ class HistoricController {
       .exec();
   };
 
+  static addResourceReceveid = (listResourceRequested, center) => {
+    const resourceNotFoundInTheCenter = [];
+
+    listResourceRequested.forEach((resourceExchange) => {
+      const indexElement = center.resource.findIndex(
+        (resourceCenter) =>
+          this.convertObjectIdFromString(resourceCenter.refItem) ===
+          resourceExchange.refItem
+      );
+
+      if (indexElement !== -1) {
+        center.resource[indexElement].quantity += resourceExchange.quantity;
+      } else {
+        const { ["_id"]: omitted, ...res } = resourceExchange;
+        resourceNotFoundInTheCenter.push(res);
+      }
+    });
+
+    if (resourceNotFoundInTheCenter.length) {
+      center.resource = [...center.resource, ...resourceNotFoundInTheCenter];
+    }
+  };
+
+  static subtractResourceExchange = (listResourceRequested, center) => {
+    listResourceRequested.forEach((resourceRequested) => {
+      const indexElement = center.resource.findIndex(
+        (resourceCenter) =>
+          this.convertObjectIdFromString(resourceCenter.refItem) ===
+          resourceRequested.refItem
+      );
+
+      if (indexElement !== -1) {
+        center.resource[indexElement].quantity -= resourceRequested.quantity;
+
+        if (center.resource[indexElement].quantity === 0) {
+          center.resource.splice(indexElement, 1);
+        }
+      }
+    });
+  };
+
+  static sumTotalPointsItemsByRequested = async (
+    listResourceExchangeIds,
+    itemsRequested
+  ) => {
+    return (
+      await resource.find().where("_id").in(listResourceExchangeIds)
+    ).reduce((acc, resource, index) => {
+      return (acc += resource.points * itemsRequested[index].quantity);
+    }, 0);
+  };
+
+  static verifyIfCenterHasItems = (
+    listResourceExchangeIds,
+    centerListResource
+  ) => {
+    return listResourceExchangeIds.filter((item) => {
+      return centerListResource.some((resource) => resource === item);
+    });
+  };
+
+  static verifyIfCenterHasQuantityAvailableItemsRequested = (
+    listRequested,
+    center
+  ) => {
+    let hasItems = true;
+
+    listRequested.forEach((requestedResource) => {
+      const searchResourceAvailable = center.resource.find(
+        (resourceCenter) =>
+          this.convertObjectIdFromString(resourceCenter.refItem) ===
+          requestedResource.refItem
+      );
+
+      if (requestedResource.quantity > searchResourceAvailable.quantity) {
+        hasItems = false;
+      }
+    });
+
+    return hasItems;
+  };
+
   static makeExchangeBetweenCommunityCenter = async (req, res) => {
     // preciso verificar se os dois centros existem
 
@@ -63,20 +145,14 @@ class HistoricController {
       (item) => item.refItem
     );
 
-    const centerOneHasItemsByExchange = listResourceExchangeOneIds.filter(
-      (item) => {
-        return listResourceByCommunityCenterOneIds.some(
-          (resource) => resource === item
-        );
-      }
+    const centerOneHasItemsByExchange = this.verifyIfCenterHasItems(
+      listResourceExchangeOneIds,
+      listResourceByCommunityCenterOneIds
     );
 
-    const centerTwoHasItemsByExchange = listResourceExchangeTwoIds.filter(
-      (item) => {
-        return listResourceByCommunityCenterTwoIds.some(
-          (resource) => resource === item
-        );
-      }
+    const centerTwoHasItemsByExchange = this.verifyIfCenterHasItems(
+      listResourceExchangeTwoIds,
+      listResourceByCommunityCenterTwoIds
     );
 
     if (centerOneHasItemsByExchange.length !== resourceCCOne.length) {
@@ -95,17 +171,11 @@ class HistoricController {
 
     let veriryIfQuantityItemsIsAvailable = true;
 
-    resourceCCOne.forEach((requestedResource) => {
-      const searchResourceAvailable = centerOne.resource.find(
-        (resourceCenter) =>
-          this.convertObjectIdFromString(resourceCenter.refItem) ===
-          requestedResource.refItem
+    veriryIfQuantityItemsIsAvailable =
+      this.verifyIfCenterHasQuantityAvailableItemsRequested(
+        resourceCCOne,
+        centerOne
       );
-
-      if (requestedResource.quantity > searchResourceAvailable.quantity) {
-        veriryIfQuantityItemsIsAvailable = false;
-      }
-    });
 
     if (!veriryIfQuantityItemsIsAvailable) {
       return res.status(400).send({
@@ -113,17 +183,11 @@ class HistoricController {
       });
     }
 
-    resourceCCTwo.forEach((requestedResource) => {
-      const searchResourceAvailable = centerTwo.resource.find(
-        (resourceCenter) =>
-          this.convertObjectIdFromString(resourceCenter.refItem) ===
-          requestedResource.refItem
+    veriryIfQuantityItemsIsAvailable =
+      this.verifyIfCenterHasQuantityAvailableItemsRequested(
+        resourceCCTwo,
+        centerTwo
       );
-
-      if (requestedResource.quantity > searchResourceAvailable.quantity) {
-        veriryIfQuantityItemsIsAvailable = false;
-      }
-    });
 
     if (!veriryIfQuantityItemsIsAvailable) {
       return res.status(400).send({
@@ -133,17 +197,17 @@ class HistoricController {
 
     // preciso verificar se a soma dos pontos dos itens solicitados são equiparáveis
 
-    const sumPointsExchangeCenterOne = (
-      await resource.find().where("_id").in(listResourceExchangeOneIds)
-    ).reduce((acc, resource, index) => {
-      return (acc += resource.points * resourceCCOne[index].quantity);
-    }, 0);
+    const sumPointsExchangeCenterOne =
+      await this.sumTotalPointsItemsByRequested(
+        listResourceExchangeOneIds,
+        resourceCCOne
+      );
 
-    const sumPointsExchangeCenterTwo = (
-      await resource.find().where("_id").in(listResourceExchangeTwoIds)
-    ).reduce((acc, resource, index) => {
-      return (acc += resource.points * resourceCCTwo[index].quantity);
-    }, 0);
+    const sumPointsExchangeCenterTwo =
+      await this.sumTotalPointsItemsByRequested(
+        listResourceExchangeTwoIds,
+        resourceCCTwo
+      );
 
     if (sumPointsExchangeCenterOne !== sumPointsExchangeCenterTwo) {
       return res.status(400).send({
@@ -157,80 +221,13 @@ class HistoricController {
 
     // decrescer a quantidade de itens que sairão o centro comunitário
 
-    resourceCCOne.forEach((resourceRequested) => {
-      const indexElement = centerOne.resource.findIndex(
-        (resourceCenter) =>
-          this.convertObjectIdFromString(resourceCenter.refItem) ===
-          resourceRequested.refItem
-      );
-
-      if (indexElement !== -1) {
-        centerOne.resource[indexElement].quantity -= resourceRequested.quantity;
-
-        if (centerOne.resource[indexElement].quantity === 0) {
-          centerOne.resource.splice(indexElement, 1);
-        }
-      }
-    });
-
-    resourceCCTwo.forEach((resourceRequested) => {
-      const indexElement = centerTwo.resource.findIndex(
-        (resourceCenter) =>
-          this.convertObjectIdFromString(resourceCenter.refItem) ===
-          resourceRequested.refItem
-      );
-
-      if (indexElement !== -1) {
-        centerTwo.resource[indexElement].quantity -= resourceRequested.quantity;
-
-        if (centerTwo.resource[indexElement].quantity === 0) {
-          centerTwo.resource.splice(indexElement, 1);
-        }
-      }
-    });
+    this.subtractResourceExchange(resourceCCOne, centerOne);
+    this.subtractResourceExchange(resourceCCTwo, centerTwo);
 
     // acrescer a quantidade de itens que irão entrar no centro comunitário
 
-    let resourceNotFound = [];
-    resourceCCTwo.forEach((resourceExchange) => {
-      const indexElement = centerOne.resource.findIndex(
-        (resourceCenter) =>
-          this.convertObjectIdFromString(resourceCenter.refItem) ===
-          resourceExchange.refItem
-      );
-
-      if (indexElement !== -1) {
-        centerOne.resource[indexElement].quantity += resourceExchange.quantity;
-      } else {
-        const { ["_id"]: omitted, ...res } = resourceExchange;
-        resourceNotFound.push(res);
-      }
-    });
-
-    if (resourceNotFound.length) {
-      centerOne.resource = [...centerOne.resource, ...resourceNotFound];
-    }
-
-    resourceNotFound = [];
-
-    resourceCCOne.forEach((resourceExchange) => {
-      const indexElement = centerTwo.resource.findIndex(
-        (resourceCenter) =>
-          this.convertObjectIdFromString(resourceCenter.refItem) ===
-          resourceExchange.refItem
-      );
-
-      if (indexElement !== -1) {
-        centerTwo.resource[indexElement].quantity += resourceExchange.quantity;
-      } else {
-        const { ["_id"]: omitted, ...res } = resourceExchange;
-        resourceNotFound.push(res);
-      }
-    });
-
-    if (resourceNotFound.length) {
-      centerTwo.resource = [...centerTwo.resource, ...resourceNotFound];
-    }
+    this.addResourceReceveid(resourceCCTwo, centerOne);
+    this.addResourceReceveid(resourceCCOne, centerTwo);
 
     // atualizar o centro comunitário 1
 
