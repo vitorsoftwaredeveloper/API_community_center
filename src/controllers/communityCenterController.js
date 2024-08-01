@@ -11,7 +11,7 @@ class CommunityCenterController {
     const { id } = req.params;
 
     const center = await communitycenter.findById(id);
-    console.log(center);
+
     if (!center) {
       return res
         .status(404)
@@ -33,6 +33,12 @@ class CommunityCenterController {
         return res.status(201).send(newCommunityCenter.toJSON());
       }
     });
+  };
+
+  static updateAllCenter = async (center) => {
+    await communitycenter
+      .findOneAndUpdate({ _id: center._id }, { $set: center })
+      .exec();
   };
 
   static updateCommunityCenter = (req, res) => {

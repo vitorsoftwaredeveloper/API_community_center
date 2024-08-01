@@ -2,22 +2,11 @@ import { historic } from "../models/Historic.js";
 import { communitycenter } from "../models/CommunityCenter.js";
 import { resource } from "../models/Resource.js";
 import moment from "moment-timezone";
+import CommunityCenterController from "./communityCenterController.js";
 
 class HistoricController {
-  static listHistoricExchange = (_, res) => {
-    return historic.find((_, resource) => {
-      return res.status(200).json(resource);
-    });
-  };
-
   static convertObjectIdFromString = (item) => {
     return item.toString();
-  };
-
-  static updateCommunityCenter = async (center) => {
-    await communitycenter
-      .findOneAndUpdate({ _id: center._id }, { $set: center })
-      .exec();
   };
 
   static addResourceReceveid = (listResourceRequested, center) => {
@@ -132,7 +121,8 @@ class HistoricController {
 
     if (communityCenterOneId === communityCenterTwoId) {
       return res.status(400).send({
-        message: `Centros comunitários iguais! Não é permitido realizar intercâmbio para a própria instituição.`,
+        message:
+          "Centros comunitários iguais! Não é permitido realizar intercâmbio para a própria instituição.",
       });
     }
 
@@ -166,13 +156,13 @@ class HistoricController {
 
     if (centerOneHasItemsByExchange.length !== resourceCCOne.length) {
       return res.status(404).send({
-        message: `Centro comunitário '${centerOne.name}' não possui alguns dos recursos para intercâmbio`,
+        message: `Centro comunitário '${centerOne.name}' não possui alguns dos recursos para intercâmbio.`,
       });
     }
 
     if (centerTwoHasItemsByExchange.length !== resourceCCTwo.length) {
       return res.status(404).send({
-        message: `Centro comunitário '${centerTwo.name}' não possui alguns dos recursos para intercâmbio`,
+        message: `Centro comunitário '${centerTwo.name}' não possui alguns dos recursos para intercâmbio.`,
       });
     }
 
@@ -188,7 +178,7 @@ class HistoricController {
 
     if (!veriryIfQuantityItemsIsAvailable) {
       return res.status(400).send({
-        message: `Quantidade insuficiente de itens centro comunitário '${centerOne.name}'`,
+        message: `Quantidade insuficiente de itens no centro comunitário '${centerOne.name}'.`,
       });
     }
 
@@ -200,7 +190,7 @@ class HistoricController {
 
     if (!veriryIfQuantityItemsIsAvailable) {
       return res.status(400).send({
-        message: `Quantidade insuficiente de itens no centro comunitário '${centerTwo.name}'`,
+        message: `Quantidade insuficiente de itens no centro comunitário '${centerTwo.name}'.`,
       });
     }
 
@@ -259,21 +249,22 @@ class HistoricController {
 
     // atualizar o centro comunitário 1
 
-    await this.updateCommunityCenter(centerOne);
-    await this.updateCommunityCenter(centerTwo);
+    await CommunityCenterController.updateAllCenter(centerOne);
+    await CommunityCenterController.updateAllCenter(centerTwo);
 
     // armazenar na tabela de histórico
     const newHistoric = new historic(req.body);
 
-    newHistoric.save((err) => {
+    newHistoric.save((err, itemHistoric) => {
       if (err) {
         return res.status(500).send({
           message: `${err.message} - falha ao cadastrar Centro comunitário`,
         });
       } else {
-        return res
-          .status(200)
-          .send({ message: "Intercâmbio realizado com sucesso!" });
+        return res.status(200).json({
+          message: "Intercâmbio realizado com sucesso!",
+          data: itemHistoric,
+        });
       }
     });
   };
@@ -320,6 +311,16 @@ class HistoricController {
         };
       })
     );
+  };
+
+  static removeItemHistoric = async (req, res) => {
+    const { id } = req.params;
+    try {
+      await historic.findByIdAndRemove(id);
+      return res.status(204).send();
+    } catch {
+      return res.status(504).send({ mesage: "Unavailable server " });
+    }
   };
 }
 

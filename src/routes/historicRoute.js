@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.get("/historic/:id", HistoricController.listHistoricByCenterId);
 router.post("/exchange", HistoricController.makeExchangeBetweenCommunityCenter);
+router.delete("/historic/:id", HistoricController.removeItemHistoric);
 
 export default router;
