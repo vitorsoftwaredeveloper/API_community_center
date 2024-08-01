@@ -127,6 +127,14 @@ class HistoricController {
         .send({ message: "Centro Comunitário inexistente!" });
     }
 
+    // preciso verificar se é o mesmo id, não faz sentido fazer intercambio para o mesmo lugar
+
+    if (communityCenterOneId === communityCenterTwoId) {
+      return res.status(400).send({
+        message: `Centros comunitários iguais! Não é permitido realizar intercâmbio para a própria instituição.`,
+      });
+    }
+
     // preciso verificar se os centros possuem os recursos
 
     const listResourceByCommunityCenterOneIds = centerOne.resource.map((item) =>
@@ -267,6 +275,20 @@ class HistoricController {
           .send({ message: "Intercâmbio realizado com sucesso!" });
       }
     });
+  };
+
+  static listHistoricByCenterId = async (req, res) => {
+    const { id: communityCenterId } = req.params;
+
+    const listHistoricExchange = await historic.find({
+      $or: [
+        { communityCenterOne: communityCenterId },
+        { communityCenterTwo: communityCenterId },
+      ],
+    });
+
+    console.log(listHistoricExchange);
+    return res.status(200).json(listHistoricExchange);
   };
 }
 
