@@ -7,11 +7,11 @@ class ReportController {
 
     return res.status(200).json(
       listCenter.filter((center) => {
-        const percentageAcceptableCenter = parseInt(
+        const percentageAcceptableCenter = Math.ceil(
           center.maxNumberPeople * 0.9
         );
 
-        const percentageOccupancyCenter = parseInt(
+        const percentageOccupancyCenter = Math.ceil(
           center.quantityPeopleOccupation * 0.9
         );
 

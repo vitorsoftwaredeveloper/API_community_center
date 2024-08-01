@@ -1,5 +1,5 @@
 import request from "supertest";
-import { afterEach, beforeEach, describe, expect, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect } from "@jest/globals";
 import app from "../app";
 
 let servidor;
@@ -14,7 +14,7 @@ const DATE_INITIAL_RUN = new Date()
   .join(" ");
 
 const CENTER_ONE = {
-  name: "Intergration Test Center 2",
+  name: "Integration Test Center 2",
   address: "example",
   localization: "example",
   maxNumberPeople: 10,
@@ -32,7 +32,7 @@ const CENTER_ONE = {
 };
 
 const CENTER_TWO = {
-  name: "Intergration Test Center 1",
+  name: "Integration Test Center 1",
   address: "example",
   localization: "example",
   maxNumberPeople: 10,

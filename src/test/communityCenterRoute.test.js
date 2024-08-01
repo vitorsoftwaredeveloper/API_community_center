@@ -24,7 +24,7 @@ describe("Test router communitycenter", () => {
     const response = await request(app)
       .post("/communitycenter")
       .send({
-        name: "Intergration Test Center",
+        name: "Integration Test Center",
         address: "example",
         localization: "example",
         maxNumberPeople: 10,
