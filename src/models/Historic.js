@@ -5,7 +5,10 @@ const historicSchema = mongoose.Schema(
     id: { type: String },
     communityCenterOne: { type: String, require: true },
     communityCenterTwo: { type: String, require: true },
-    dateExchange: { type: Date, default: new Date().toISOString() },
+    dateExchange: {
+      type: Date,
+      default: new Date(),
+    },
     resourceCCOne: [
       {
         quantity: { type: Number, require: true },

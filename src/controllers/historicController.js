@@ -1,10 +1,11 @@
 import { historic } from "../models/Historic.js";
 import { communitycenter } from "../models/CommunityCenter.js";
 import { resource } from "../models/Resource.js";
+import moment from "moment-timezone";
 
 class HistoricController {
-  static listHistoricExchange = (req, res) => {
-    return historic.find((err, resource) => {
+  static listHistoricExchange = (_, res) => {
+    return historic.find((_, resource) => {
       res.status(200).json(resource);
     });
   };
@@ -271,7 +272,7 @@ class HistoricController {
         });
       } else {
         return res
-          .status(201)
+          .status(200)
           .send({ message: "Intercâmbio realizado com sucesso!" });
       }
     });
@@ -279,16 +280,46 @@ class HistoricController {
 
   static listHistoricByCenterId = async (req, res) => {
     const { id: communityCenterId } = req.params;
+    const { date } = req.query;
+
+    try {
+      if (isNaN(new Date(date).getFullYear())) {
+        throw Error;
+      }
+    } catch {
+      return res.status(400).send({
+        message:
+          "Formato de data inválido, utilize o seguinte padrão yyyy-MM-dd hh:mm:ss",
+      });
+    }
 
     const listHistoricExchange = await historic.find({
       $or: [
         { communityCenterOne: communityCenterId },
         { communityCenterTwo: communityCenterId },
       ],
+      dateExchange: {
+        $gte: moment.tz(date, "America/Sao_Paulo").utc().toDate(),
+        $lte: moment
+          .tz(new Date().toISOString(), "America/Sao_Paulo")
+          .utc()
+          .toDate(),
+      },
     });
 
-    console.log(listHistoricExchange);
-    return res.status(200).json(listHistoricExchange);
+    return res.status(200).json(
+      listHistoricExchange.map((item) => {
+        return {
+          communityCenterOne: item.communityCenterOne,
+          communityCenterTwo: item.communityCenterTwo,
+          dateExchange: moment(item.dateExchange)
+            .tz("America/Sao_Paulo")
+            .format("YYYY-MM-DD HH:mm:ss"),
+          resourceExchangeCenterOne: item.resourceCCOne,
+          resourceExchangeCenterTwo: item.resourceCCTwo,
+        };
+      })
+    );
   };
 }
 
