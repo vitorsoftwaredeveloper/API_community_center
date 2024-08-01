@@ -6,7 +6,7 @@ import moment from "moment-timezone";
 class HistoricController {
   static listHistoricExchange = (_, res) => {
     return historic.find((_, resource) => {
-      res.status(200).json(resource);
+      return res.status(200).json(resource);
     });
   };
 

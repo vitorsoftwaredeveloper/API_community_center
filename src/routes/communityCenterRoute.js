@@ -5,12 +5,8 @@ const router = express.Router();
 
 router.get("/communitycenter", CommunityCenterController.listCommunityCenters);
 router.get(
-  "/communitycenter/stuffed",
-  CommunityCenterController.listCommunityCentersOccupationStuffed
-);
-router.get(
-  "/communitycenter/averageitems",
-  CommunityCenterController.calcAverageItemsFromCommunityCenters
+  "/communitycenter/:id",
+  CommunityCenterController.searchCommunityById
 );
 router.post("/communitycenter", CommunityCenterController.saveCommunityCenter);
 router.put(
@@ -18,9 +14,10 @@ router.put(
   CommunityCenterController.updateCommunityCenter
 );
 router.put(
-  "/update/people/:id",
+  "/communitycenter/people/:id",
   CommunityCenterController.updateQuantityPeopleCommunityCenter
 );
+
 router.delete(
   "/communitycenter/:id",
   CommunityCenterController.deleteCommunityCenter

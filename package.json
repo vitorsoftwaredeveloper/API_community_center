@@ -6,13 +6,15 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose"
   },
   "dependencies": {
     "express": "^4.17.3",
+    "jest": "^28.1.2",
     "moment-timezone": "^0.5.45",
     "mongoose": "^6.2.6",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "supertest": "^6.2.4"
   },
   "keywords": [],
   "author": "",
