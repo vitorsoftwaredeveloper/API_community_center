@@ -12,7 +12,7 @@ class CommunityCenterController {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
-      return res.status(400).send({ message: "Id com formato inválido!" });
+      return res.status(400).send({ message: "Format id incorrect!" });
     }
 
     const center = await communitycenter.findById(id);
@@ -57,7 +57,7 @@ class CommunityCenterController {
     const { quantityPeopleOccupation, resource } = req.body;
 
     if (!isValidObjectId(id)) {
-      return res.status(400).send({ message: "Id com formato inválido!" });
+      return res.status(400).send({ message: "Format id incorrect!" });
     }
 
     if (quantityPeopleOccupation) {
@@ -122,7 +122,7 @@ class CommunityCenterController {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
-      return res.status(400).send({ message: "Id com formato inválido!" });
+      return res.status(400).send({ message: "Format id incorrect!" });
     }
 
     communitycenter.findByIdAndRemove(id, (err) => {

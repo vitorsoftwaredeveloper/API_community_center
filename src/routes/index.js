@@ -1,7 +1,7 @@
 import express from "express";
 import resource from "./resourceRoute.js";
 import communityCenter from "./communityCenterRoute.js";
-import historic from "./historicRoute.js";
+import historic from "./exchangeRoute.js";
 import report from "./reportRoute.js";
 
 const routes = (app) => {

@@ -19,14 +19,14 @@ const communitySchemaZod = z.object({
 const communityCenterSchema = mongoose.Schema(
   {
     id: { type: String },
-    name: { type: String, require: true },
-    address: { type: String, require: true },
-    localization: { type: String, require: true },
-    maxNumberPeople: { type: Number, require: true },
+    name: { type: String },
+    address: { type: String },
+    localization: { type: String },
+    maxNumberPeople: { type: Number },
     quantityPeopleOccupation: { type: Number, default: 0 },
     resource: [
       {
-        quantity: { type: Number, require: true },
+        quantity: { type: Number },
         refItem: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "resource",
@@ -45,7 +45,7 @@ const formatResponseErrorValidate = (error) => {
     .reduce((acc, error) => {
       return (acc += error.message + " / ");
     }, "")
-    .slice(0, -2);
+    .slice(0, -3);
 };
 
 communityCenterSchema.pre("save", function (next) {

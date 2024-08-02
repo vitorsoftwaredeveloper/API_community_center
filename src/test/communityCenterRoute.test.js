@@ -76,7 +76,7 @@ describe("Test router communitycenter", () => {
         .send(param)
         .expect(400);
 
-      expect(response.body.message).toBe("Id com formato inválido!");
+      expect(response.body.message).toBe("Format id incorrect!");
     }
   );
 
@@ -85,6 +85,39 @@ describe("Test router communitycenter", () => {
       .put(`/communitycenter/people/${idCenter}`)
       .send({ quantityPeopleOccupation: 12 })
       .expect(400);
+  });
+
+  it("Ss", async () => {
+    const response = await request(app)
+      .put(`/communitycenter/${idCenter}`)
+      .send({ quantityPeopleOccupation: 12 })
+      .expect(400);
+
+    expect(response.body.message).toBe(
+      "A propriedade quantityPeopleOccupation não pode ser atualizada nesse serviço, somente informações básicas como nome, endereço, etc."
+    );
+  });
+
+  it("Ss", async () => {
+    const response = await request(app)
+      .put(`/communitycenter/${idCenter}`)
+      .send({
+        resource: [
+          {
+            quantity: 10,
+            refItem: "66a930933f61b00a8261d6f4",
+          },
+          {
+            quantity: 10,
+            refItem: "66a9314e3f61b00a8261d6f8",
+          },
+        ],
+      })
+      .expect(400);
+
+    expect(response.body.message).toBe(
+      "A propriedade resource não pode ser atualizada nesse serviço, somente informações básicas como nome, endereço, etc."
+    );
   });
 
   it("Should be able to return status code 200 as the number of people to occupy the center does not exceed its maximum capacity", async () => {
@@ -97,7 +130,7 @@ describe("Test router communitycenter", () => {
   it("Should be able to return, in the community center search, 'Id with invalid format', as mongodb has a standard format.", async () => {
     const response = await request(app).get(`/communitycenter/232`).expect(400);
 
-    expect(response.body.message).toBe("Id com formato inválido!");
+    expect(response.body.message).toBe("Format id incorrect!");
   });
 
   it("Should be able to return the community center specified by the Id", async () => {
@@ -118,7 +151,7 @@ describe("Test router communitycenter", () => {
       .delete(`/communitycenter/232`)
       .expect(400);
 
-    expect(response.body.message).toBe("Id com formato inválido!");
+    expect(response.body.message).toBe("Format id incorrect!");
   });
 
   it("Should be able to remove the newly created center.", async () => {

@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const resourceSchema = mongoose.Schema(
   {
     id: { type: String },
-    item: { type: String, require: true },
-    points: { type: Number, require: true },
+    item: { type: String },
+    points: { type: Number },
   },
   {
     versionKey: false,

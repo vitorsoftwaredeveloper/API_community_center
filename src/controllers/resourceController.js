@@ -12,7 +12,7 @@ class ResourceCenterController {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
-      return res.status(400).send({ message: "Id com formato inválido!" });
+      return res.status(400).send({ message: "Format id incorrect!" });
     }
 
     const resultSearch = await resource.findById(id);

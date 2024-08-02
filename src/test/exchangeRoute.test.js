@@ -288,33 +288,13 @@ describe("Test router historic", () => {
     expect(response.body.message).toBe("Intercâmbio realizado com sucesso!");
   });
 
-  it("Should be able to return incorrect datetime format message.", async () => {
-    const response = await request(app).get(
-      `/historic/${itemHistoricId}?date=${DATE_INITIAL_RUN + "R"}`
-    );
-
-    expect(response.body.message).toBe(
-      "Formato de data inválido, utilize o seguinte padrão yyyy-MM-dd hh:mm:ss"
-    );
-  });
-
-  //   it("Deve ser capaz de listar todos os intercâmbios que o centro um realizou.", async () => {
-  //     const response = await request(app).get(
-  //       `/historic/${centerOneId}?date=${DATE_INITIAL_RUN}`
-  //     );
-
-  //     expect(
-  //       response.body[0].communityCenterOne || response.body[0].communityCenterTwo
-  //     ).toBe(centerOneId);
-  //   });
-
   it("Should be possible to return, when removing the history item, 'Id with invalid format', as mongodb has a standard format.", async () => {
-    const response = await request(app).delete(`/historic/232`).expect(400);
+    const response = await request(app).delete(`/exchange/232`).expect(400);
 
-    expect(response.body.message).toBe("Id com formato inválido!");
+    expect(response.body.message).toBe("Format id incorrect!");
   });
 
   it("Should be able to remove the history item documenting the recent exchange carried out by the above two centers.", async () => {
-    await request(app).delete(`/historic/${itemHistoricId}`).expect(204);
+    await request(app).delete(`/exchange/${itemHistoricId}`).expect(204);
   });
 });

@@ -1,5 +1,8 @@
+import { isValidObjectId } from "mongoose";
 import { communitycenter } from "../models/CommunityCenter.js";
 import { resource } from "../models/Resource.js";
+import moment from "moment-timezone";
+import { historic } from "../models/Historic.js";
 
 class ReportController {
   static listCommunityCentersOccupationStuffed = async (_, res) => {
@@ -62,6 +65,53 @@ class ReportController {
     return res
       .status(200)
       .send({ message: formatStringResponse.trim() + " por centro." });
+  };
+
+  static listHistoricByCenterId = async (req, res) => {
+    const { id: communityCenterId } = req.params;
+    const { date } = req.query;
+
+    if (!isValidObjectId(communityCenterId)) {
+      return res.status(400).send({ message: "Format id incorrect!" });
+    }
+
+    if (isNaN(new Date(date).getFullYear())) {
+      return res.status(400).send({
+        message:
+          "Formato de data inválido, utilize o seguinte padrão yyyy-MM-dd hh:mm:ss",
+      });
+    }
+
+    const listHistoricExchange = await historic.find({
+      $or: [
+        { communityCenterOne: communityCenterId },
+        { communityCenterTwo: communityCenterId },
+      ],
+      ...(date && {
+        dateExchange: {
+          $gte: moment.tz(date, "America/Sao_Paulo").utc().toDate(),
+          $lte: moment
+            .tz(new Date().toISOString(), "America/Sao_Paulo")
+            .utc()
+            .toDate(),
+        },
+      }),
+    });
+
+    return res.status(200).json(
+      listHistoricExchange.map((item) => {
+        return {
+          _id: item._id,
+          communityCenterOne: item.communityCenterOne,
+          communityCenterTwo: item.communityCenterTwo,
+          dateExchange: moment(item.dateExchange)
+            .tz("America/Sao_Paulo")
+            .format("YYYY-MM-DDTHH:mm:ssZ"),
+          resourceExchangeCenterOne: item.resourceCCOne,
+          resourceExchangeCenterTwo: item.resourceCCTwo,
+        };
+      })
+    );
   };
 }
 

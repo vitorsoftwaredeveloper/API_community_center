@@ -3,15 +3,15 @@ import mongoose from "mongoose";
 const historicSchema = mongoose.Schema(
   {
     id: { type: String },
-    communityCenterOne: { type: String, require: true },
-    communityCenterTwo: { type: String, require: true },
+    communityCenterOne: { type: String },
+    communityCenterTwo: { type: String },
     dateExchange: {
       type: Date,
       default: new Date(),
     },
     resourceCCOne: [
       {
-        quantity: { type: Number, require: true },
+        quantity: { type: Number },
         refItem: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "resource",
@@ -21,7 +21,7 @@ const historicSchema = mongoose.Schema(
     ],
     resourceCCTwo: [
       {
-        quantity: { type: Number, require: true },
+        quantity: { type: Number },
         refItem: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "resource",

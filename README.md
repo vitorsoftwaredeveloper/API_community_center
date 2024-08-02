@@ -162,7 +162,7 @@ Essa requisição irá retornar o centros comunitário informado pelo Id.
 
 `PUT /communitycenter/:id - FORMATO DA REQUISIÇÃO`
 
-<p>Esse endpoint servirá para quaisquer alteração que necessite realizar nos dados do centro comunitário.</p>
+<p>Esse endpoint servirá para quaisquer atualização em propriedades básicas do centro comunitário como name, address, localization e maxNumberPeople,mas não permitirá a atualização de propriedade como <strong>quantityPeopleOccupation</strong> e <strong>resource</strong>, pois somente podem ser atualizadas em seus respectivos serviços: alterar quantidade de pessoas no centro e intercâmbio, respectivamente.</p>
 <br/>
 
 ```json
@@ -170,22 +170,7 @@ Essa requisição irá retornar o centros comunitário informado pelo Id.
   "name": "Center marvel",
   "address": "example asd ",
   "localization": "example asdasd",
-  "maxNumberPeople": 100,
-  "quantityPeopleOccupation": 10,
-  "resource": [
-    {
-      "quantity": 2,
-      "refItem": "66a930933f61b00a8261d6f4"
-    },
-    {
-      "quantity": 10,
-      "refItem": "66a930e53f61b00a8261d6f5"
-    },
-    {
-      "quantity": 5,
-      "refItem": "66a9314e3f61b00a8261d6f8"
-    }
-  ]
+  "maxNumberPeople": 100
 }
 ```
 
@@ -263,75 +248,11 @@ Significados das propriedades abaixo:
 <br/>
 <br/>
 
-## **Endpoint - Histórico**
+<h2 align = "left"> Removendo item do histórico de intercâmbio </h2>
 
-<hr/>
-<br/>
+`DELETE /exchange/:id - FORMATO DA REQUISIÇÃO`
 
-<h2 align = "left"> Listar histórico de Intercâmbio </h2>
-
-`GET /historic/:id?date=yyyy-mm-dd hh:MM:ss - FORMATO DA REQUISIÇÃO`
-
-<p>Esse endpoint tem como finalidade listar apenas os intercâmbios realizados por um determinado centro comunitário, como também, é possível filtrar por um datetime do passado até o presente momento.</p>
-
-Significados das query params acima na request:
-
-<ul>
-    <li><strong>yyyy</strong> - ano</li>
-    <li><strong>mm</strong> - mês</li>
-    <li><strong>dd</strong> - dia </li>
-    <li><strong>hh</strong> - horas </li>
-    <li><strong>MM</strong> - minutos</li>
-    <li><strong>ss</strong> - segundos</li>
-</ul>
-
-Significados das propriedades da resposta:
-
-<ul>
-    <li><strong>communityCenterOne</strong> - centro um que realizou o intercâmbio</li>
-    <li><strong>communityCenterTwo</strong> - centro dois que realizou o intercâmbio</li>
-    <li><strong>dateExchange</strong> - momento da realização do intercâmbio </li>
-    <li><strong>resourceExchangeCenterOne</strong> - lista de recursos cedidos pelo centro um </li>
-    <li><strong>resourceExchangeCenterTwo</strong> - lista de recursos cedidos pelo centro dois</li>
-    <li><strong>quantity</strong> - quantidade de itens cedidos</li>
-    <li><strong>refItem</strong> - id do item cedido</li>
-</ul>
-
-<br/>
-
-```json
-[
-  {
-    "communityCenterOne": "66a94a6dac0e39d1d6882be1",
-    "communityCenterTwo": "66a9594e7c4db129fe34a3ba",
-    "dateExchange": "2024-08-02 07:38:01",
-    "resourceExchangeCenterOne": [
-      {
-        "quantity": 2,
-        "refItem": "66a931913f61b00a8261d6f9",
-        "_id": "66acb72ac97b88837a992e59"
-      },
-      {
-        "quantity": 1,
-        "refItem": "66a930e53f61b00a8261d6f5",
-        "_id": "66acb72ac97b88837a992e5a"
-      }
-    ],
-    "resourceExchangeCenterTwo": [
-      {
-        "quantity": 1,
-        "refItem": "66a930933f61b00a8261d6f4",
-        "_id": "66acb72ac97b88837a992e5b"
-      },
-      {
-        "quantity": 1,
-        "refItem": "66a9314e3f61b00a8261d6f8",
-        "_id": "66acb72ac97b88837a992e5c"
-      }
-    ]
-  }
-]
-```
+<p>Esse endpoint recebe o id do item de histórico e o remove.</p>
 
 <br/>
 <br/>
@@ -393,6 +314,74 @@ Significados das propriedades da resposta:
 {
   "message": "6 Voluntário, 3 Médico, 3 Kit de suprimentos médicos, 6 Veículo de transporte, por centro."
 }
+```
+
+<br/>
+<br/>
+
+<h2 align = "left"> Listar histórico de Intercâmbio </h2>
+
+`GET /reporthistoric/:id?date=yyyy-mm-dd hh:MM:ss - FORMATO DA REQUISIÇÃO`
+
+<p>Esse endpoint tem como finalidade listar apenas os intercâmbios realizados por um determinado centro comunitário e por um datetime do passado até o presente momento.</p>
+
+Significados das query params acima na request:
+
+<ul>
+    <li><strong>yyyy</strong> - ano</li>
+    <li><strong>mm</strong> - mês</li>
+    <li><strong>dd</strong> - dia </li>
+    <li><strong>hh</strong> - horas </li>
+    <li><strong>MM</strong> - minutos</li>
+    <li><strong>ss</strong> - segundos</li>
+</ul>
+
+Significados das propriedades da resposta:
+
+<ul>
+    <li><strong>communityCenterOne</strong> - centro um que realizou o intercâmbio</li>
+    <li><strong>communityCenterTwo</strong> - centro dois que realizou o intercâmbio</li>
+    <li><strong>dateExchange</strong> - momento da realização do intercâmbio </li>
+    <li><strong>resourceExchangeCenterOne</strong> - lista de recursos cedidos pelo centro um </li>
+    <li><strong>resourceExchangeCenterTwo</strong> - lista de recursos cedidos pelo centro dois</li>
+    <li><strong>quantity</strong> - quantidade de itens cedidos</li>
+    <li><strong>refItem</strong> - id do item cedido</li>
+</ul>
+
+<br/>
+
+```json
+[
+  {
+    "communityCenterOne": "66a94a6dac0e39d1d6882be1",
+    "communityCenterTwo": "66a9594e7c4db129fe34a3ba",
+    "dateExchange": "2024-08-02 07:38:01",
+    "resourceExchangeCenterOne": [
+      {
+        "quantity": 2,
+        "refItem": "66a931913f61b00a8261d6f9",
+        "_id": "66acb72ac97b88837a992e59"
+      },
+      {
+        "quantity": 1,
+        "refItem": "66a930e53f61b00a8261d6f5",
+        "_id": "66acb72ac97b88837a992e5a"
+      }
+    ],
+    "resourceExchangeCenterTwo": [
+      {
+        "quantity": 1,
+        "refItem": "66a930933f61b00a8261d6f4",
+        "_id": "66acb72ac97b88837a992e5b"
+      },
+      {
+        "quantity": 1,
+        "refItem": "66a9314e3f61b00a8261d6f8",
+        "_id": "66acb72ac97b88837a992e5c"
+      }
+    ]
+  }
+]
 ```
 
 <br/>

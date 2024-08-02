@@ -1,11 +1,10 @@
 import { historic } from "../models/Historic.js";
 import { communitycenter } from "../models/CommunityCenter.js";
 import { resource } from "../models/Resource.js";
-import moment from "moment-timezone";
 import CommunityCenterController from "./communityCenterController.js";
 import { isValidObjectId } from "mongoose";
 
-class HistoricController {
+class ExchangeController {
   static convertObjectIdFromString = (item) => {
     return item.toString();
   };
@@ -270,53 +269,11 @@ class HistoricController {
     });
   };
 
-  static listHistoricByCenterId = async (req, res) => {
-    const { id: communityCenterId } = req.params;
-    const { date } = req.query;
-
-    if (date && isNaN(new Date(date).getFullYear())) {
-      return res.status(400).send({
-        message:
-          "Formato de data inválido, utilize o seguinte padrão yyyy-MM-dd hh:mm:ss",
-      });
-    }
-
-    const listHistoricExchange = await historic.find({
-      $or: [
-        { communityCenterOne: communityCenterId },
-        { communityCenterTwo: communityCenterId },
-      ],
-      ...(date && {
-        dateExchange: {
-          $gte: moment.tz(date, "America/Sao_Paulo").utc().toDate(),
-          $lte: moment
-            .tz(new Date().toISOString(), "America/Sao_Paulo")
-            .utc()
-            .toDate(),
-        },
-      }),
-    });
-
-    return res.status(200).json(
-      listHistoricExchange.map((item) => {
-        return {
-          communityCenterOne: item.communityCenterOne,
-          communityCenterTwo: item.communityCenterTwo,
-          dateExchange: moment(item.dateExchange)
-            .tz("America/Sao_Paulo")
-            .format("YYYY-MM-DD HH:mm:ss"),
-          resourceExchangeCenterOne: item.resourceCCOne,
-          resourceExchangeCenterTwo: item.resourceCCTwo,
-        };
-      })
-    );
-  };
-
   static removeItemHistoric = async (req, res) => {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
-      return res.status(400).send({ message: "Id com formato inválido!" });
+      return res.status(400).send({ message: "Format id incorrect!" });
     }
 
     try {
@@ -328,4 +285,4 @@ class HistoricController {
   };
 }
 
-export default HistoricController;
+export default ExchangeController;

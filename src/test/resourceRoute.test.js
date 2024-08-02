@@ -21,7 +21,7 @@ afterEach(async () => {
 });
 
 describe("Test router resource", () => {
-  it("Deve ser capaz de retornar uma lista de todos os recursos que pontuam na realização de intercâmbio.", async () => {
+  it("Should be able to return a list of all resources that score in exchange achievement.", async () => {
     const response = await request(app).get(`/resource`);
 
     expect(
@@ -47,10 +47,10 @@ describe("Test router resource", () => {
   it("Should be possible to return, when searching for a resource, 'Id with invalid format', as mongodb has a standard format.", async () => {
     const response = await request(app).get(`/resource/232`).expect(400);
 
-    expect(response.body.message).toBe("Id com formato inválido!");
+    expect(response.body.message).toBe("Format id incorrect!");
   });
 
-  it("Deve ser capaz de retornar um recurso informando o id.", async () => {
+  it("Should be be able to return a resource stating the id.", async () => {
     const response = await request(app).get(
       `/resource/66a930933f61b00a8261d6f4`
     );

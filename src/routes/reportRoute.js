@@ -7,6 +7,7 @@ router.get(
   "/reportstuffed",
   ReportController.listCommunityCentersOccupationStuffed
 );
+router.get("/reporthistoric/:id", ReportController.listHistoricByCenterId);
 router.get(
   "/reportaverage",
   ReportController.calcAverageItemsFromCommunityCenters
