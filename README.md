@@ -16,9 +16,7 @@ A API tem 12 endpoints listados, sendo possível realizar CRUD de centros comuni
 <br/>
 <br/>
 
-O JSON para utilizar no Insomnia ou Postman é este aqui -> https://drive.google.com/file/d/1jyMfmSCTTMP5RIoFeoUxQQk-x5TcJicW/view?usp=sharing
-
-O url base da API é http://localhost:8000
+<strong>A url base da API é http://localhost:8000</strong>
 <br/>
 <br/>
 
