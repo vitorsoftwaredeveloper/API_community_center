@@ -11,6 +11,10 @@ class CommunityCenterController {
   static searchCommunityById = async (req, res) => {
     const { id } = req.params;
 
+    if (!isValidObjectId(id)) {
+      return res.status(400).send({ message: "Id com formato inválido!" });
+    }
+
     const center = await communitycenter.findById(id);
 
     if (!center) {
@@ -44,6 +48,10 @@ class CommunityCenterController {
 
   static updateCommunityCenter = (req, res) => {
     const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+      return res.status(400).send({ message: "Id com formato inválido!" });
+    }
 
     communitycenter.findByIdAndUpdate(id, { $set: req.body }, (err) => {
       if (err) {
@@ -91,6 +99,10 @@ class CommunityCenterController {
 
   static deleteCommunityCenter = (req, res) => {
     const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+      return res.status(400).send({ message: "Id com formato inválido!" });
+    }
 
     communitycenter.findByIdAndRemove(id, (err) => {
       if (err) {

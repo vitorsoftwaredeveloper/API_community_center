@@ -1,27 +1,10 @@
 import request from "supertest";
 import { afterEach, beforeEach, describe, expect } from "@jest/globals";
 import app from "../app";
+import { CENTER_ONE } from "./mock";
 
 let servidor;
 let centerOneId;
-
-const CENTER_ONE = {
-  name: "Integration test center suffed",
-  address: "example",
-  localization: "example",
-  maxNumberPeople: 10,
-  quantityPeopleOccupation: 9,
-  resource: [
-    {
-      quantity: 10,
-      refItem: "66a930933f61b00a8261d6f4",
-    },
-    {
-      quantity: 10,
-      refItem: "66a9314e3f61b00a8261d6f8",
-    },
-  ],
-};
 
 beforeEach(async () => {
   const porta = 4000;

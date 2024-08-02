@@ -1,53 +1,12 @@
 import request from "supertest";
 import { afterEach, beforeEach, describe, expect } from "@jest/globals";
 import app from "../app";
+import { CENTER_ONE, CENTER_TWO, DATE_INITIAL_RUN } from "./mock";
 
 let servidor;
 let centerOneId;
 let centerTwoId;
 let itemHistoricId;
-
-const DATE_INITIAL_RUN = new Date()
-  .toISOString()
-  .split(".")[0]
-  .split("T")
-  .join(" ");
-
-const CENTER_ONE = {
-  name: "Integration Test Center 2",
-  address: "example",
-  localization: "example",
-  maxNumberPeople: 10,
-  quantityPeopleOccupation: 0,
-  resource: [
-    {
-      quantity: 10,
-      refItem: "66a930933f61b00a8261d6f4",
-    },
-    {
-      quantity: 10,
-      refItem: "66a9314e3f61b00a8261d6f8",
-    },
-  ],
-};
-
-const CENTER_TWO = {
-  name: "Integration Test Center 1",
-  address: "example",
-  localization: "example",
-  maxNumberPeople: 10,
-  quantityPeopleOccupation: 0,
-  resource: [
-    {
-      quantity: 10,
-      refItem: "66a930933f61b00a8261d6f4",
-    },
-    {
-      quantity: 10,
-      refItem: "66a9314e3f61b00a8261d6f8",
-    },
-  ],
-};
 
 beforeEach(async () => {
   const porta = 9000;
@@ -68,7 +27,7 @@ afterEach(async () => {
 });
 
 describe("Test router historic", () => {
-  it("Deve ser capaz de retornar a mensagem: 'Centro Comunitário inexistente!', ao tentar realizar um intercâmbio passando um id de um centro que não existe.", async () => {
+  it("Should be able to return the message: 'Community Center does not exist!', when trying to carry out an exchange by passing an ID of a center that does not exist.", async () => {
     const response = await request(app)
       .post("/exchange")
       .send({
@@ -99,7 +58,7 @@ describe("Test router historic", () => {
     expect(response.body.message).toBe("Centro Comunitário inexistente!");
   });
 
-  it("Deve ser capaz de verificar que os id's do centros passados no intercâmbio são iguais.", async () => {
+  it("Should be able to verify that the center IDs passed in the exchange are the same.", async () => {
     const response = await request(app)
       .post("/exchange")
       .send({
@@ -132,7 +91,7 @@ describe("Test router historic", () => {
     );
   });
 
-  it("Deve ser capaz de verificar que os recursos número [2] do centro um não está disponível no centro.", async () => {
+  it("Should be able to verify that resource number [2] from center one is not available in the center.", async () => {
     const response = await request(app)
       .post("/exchange")
       .send({
@@ -165,7 +124,7 @@ describe("Test router historic", () => {
     );
   });
 
-  it("Deve ser capaz de verificar que os recursos número [2] do centro dois não está disponível no centro.", async () => {
+  it("Should be able to verify that resource number [2] from center two is not available in center two.", async () => {
     const response = await request(app)
       .post("/exchange")
       .send({
@@ -198,7 +157,7 @@ describe("Test router historic", () => {
     );
   });
 
-  it("Deve ser capaz de verificar que a quantidade dos recursos número [2] de recursos ultrapassam o disponível do centro um", async () => {
+  it("Should be able to verify that the number of resources number [2] exceeds the center's available resources one", async () => {
     const response = await request(app)
       .post("/exchange")
       .send({
@@ -231,7 +190,7 @@ describe("Test router historic", () => {
     );
   });
 
-  it("Deve ser capaz de verificar que a quantidade dos recursos número [2] de recursos ultrapassam o disponível do centro dois", async () => {
+  it("Should be able to check whether the quantity of resources number [2] of resources has exceeded that available from center two", async () => {
     const response = await request(app)
       .post("/exchange")
       .send({
@@ -264,7 +223,7 @@ describe("Test router historic", () => {
     );
   });
 
-  it("Deve ser capaz de verificar que a soma dos pontos dos itens do centro um e centro dois diferem.", async () => {
+  it("Should be able to verify that the sum of the points of the items in center one and center two differ.", async () => {
     const response = await request(app)
       .post("/exchange")
       .send({
@@ -297,7 +256,7 @@ describe("Test router historic", () => {
     );
   });
 
-  it("Deve ser capaz de verificar o intercâmbio foi realizado com sucesso.", async () => {
+  it("Should be able to verify the exchange was carried out successfully.", async () => {
     const response = await request(app)
       .post("/exchange")
       .send({
@@ -329,7 +288,7 @@ describe("Test router historic", () => {
     expect(response.body.message).toBe("Intercâmbio realizado com sucesso!");
   });
 
-  it("Deve ser capaz de retornar mensagem de formato de datetime incorreto.", async () => {
+  it("Should be able to return incorrect datetime format message.", async () => {
     const response = await request(app).get(
       `/historic/${itemHistoricId}?date=${DATE_INITIAL_RUN + "R"}`
     );
@@ -349,7 +308,13 @@ describe("Test router historic", () => {
   //     ).toBe(centerOneId);
   //   });
 
-  it("Deve ser capaz de remover o item de histórico que documenta o recente intercâmbio o intercâmbio realizado pelos dois centros acima", async () => {
+  it("Should be possible to return, when removing the history item, 'Id with invalid format', as mongodb has a standard format.", async () => {
+    const response = await request(app).delete(`/historic/232`).expect(400);
+
+    expect(response.body.message).toBe("Id com formato inválido!");
+  });
+
+  it("Should be able to remove the history item documenting the recent exchange carried out by the above two centers.", async () => {
     await request(app).delete(`/historic/${itemHistoricId}`).expect(204);
   });
 });

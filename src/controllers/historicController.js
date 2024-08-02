@@ -3,6 +3,7 @@ import { communitycenter } from "../models/CommunityCenter.js";
 import { resource } from "../models/Resource.js";
 import moment from "moment-timezone";
 import CommunityCenterController from "./communityCenterController.js";
+import { isValidObjectId } from "mongoose";
 
 class HistoricController {
   static convertObjectIdFromString = (item) => {
@@ -313,6 +314,11 @@ class HistoricController {
 
   static removeItemHistoric = async (req, res) => {
     const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+      return res.status(400).send({ message: "Id com formato inválido!" });
+    }
+
     try {
       await historic.findByIdAndRemove(id);
       return res.status(204).send();

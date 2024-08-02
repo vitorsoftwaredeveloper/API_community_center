@@ -1,14 +1,19 @@
+import { isValidObjectId } from "mongoose";
 import { resource } from "../models/Resource.js";
 
 class ResourceCenterController {
-  static listResources = (req, res) => {
-    return resource.find((err, resource) => {
+  static listResources = (_, res) => {
+    return resource.find((_, resource) => {
       return res.status(200).json(resource);
     });
   };
 
   static listResourcesById = async (req, res) => {
     const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+      return res.status(400).send({ message: "Id com formato inválido!" });
+    }
 
     const resultSearch = await resource.findById(id);
 

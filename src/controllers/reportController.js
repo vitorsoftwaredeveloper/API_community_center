@@ -20,7 +20,7 @@ class ReportController {
     );
   };
 
-  static calcAverageItemsFromCommunityCenters = async (req, res) => {
+  static calcAverageItemsFromCommunityCenters = async (_, res) => {
     const listCenter = await communitycenter.find({});
 
     if (listCenter.length === 0) {
