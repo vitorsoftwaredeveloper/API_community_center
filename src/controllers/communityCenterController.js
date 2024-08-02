@@ -54,9 +54,24 @@ class CommunityCenterController {
 
   static updateCommunityCenter = (req, res) => {
     const { id } = req.params;
+    const { quantityPeopleOccupation, resource } = req.body;
 
     if (!isValidObjectId(id)) {
       return res.status(400).send({ message: "Id com formato inválido!" });
+    }
+
+    if (quantityPeopleOccupation) {
+      return res.status(400).send({
+        message:
+          "A propriedade quantityPeopleOccupation não pode ser atualizada nesse serviço, somente informações básicas como nome, endereço, etc.",
+      });
+    }
+
+    if (resource) {
+      return res.status(400).send({
+        message:
+          "A propriedade resource não pode ser atualizada nesse serviço, somente informações básicas como nome, endereço, etc.",
+      });
     }
 
     communitycenter.findByIdAndUpdate(id, { $set: req.body }, (err) => {
