@@ -25,6 +25,7 @@ O url base da API é http://localhost:8000
 ## **Endpoint - Community Center**
 
 <hr/>
+<br/>
 
 <h2> Listando centros comunitários </h2>
 
