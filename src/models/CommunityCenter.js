@@ -13,7 +13,7 @@ const communitySchemaZod = z.object({
   quantityPeopleOccupation: z
     .number()
     .int()
-    .nonnegative("Age must be a non-negative number"),
+    .nonnegative("quantityPeopleOccupation must be a non-negative number"),
 });
 
 const communityCenterSchema = mongoose.Schema(
@@ -40,7 +40,7 @@ const communityCenterSchema = mongoose.Schema(
   }
 );
 
-const formatResponseErrorValidat = (error) => {
+const formatResponseErrorValidate = (error) => {
   return error
     .reduce((acc, error) => {
       return (acc += error.message + " / ");
@@ -55,7 +55,7 @@ communityCenterSchema.pre("save", function (next) {
   if (!result.success) {
     const error = new Error("");
     error.type = "ZodError";
-    error.message = formatResponseErrorValidat(result.error.errors);
+    error.message = formatResponseErrorValidate(result.error.errors);
 
     return next(error);
   }
