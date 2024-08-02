@@ -273,11 +273,7 @@ class HistoricController {
     const { id: communityCenterId } = req.params;
     const { date } = req.query;
 
-    try {
-      if (isNaN(new Date(date).getFullYear())) {
-        throw Error;
-      }
-    } catch {
+    if (date && isNaN(new Date(date).getFullYear())) {
       return res.status(400).send({
         message:
           "Formato de data inválido, utilize o seguinte padrão yyyy-MM-dd hh:mm:ss",
@@ -289,13 +285,15 @@ class HistoricController {
         { communityCenterOne: communityCenterId },
         { communityCenterTwo: communityCenterId },
       ],
-      dateExchange: {
-        $gte: moment.tz(date, "America/Sao_Paulo").utc().toDate(),
-        $lte: moment
-          .tz(new Date().toISOString(), "America/Sao_Paulo")
-          .utc()
-          .toDate(),
-      },
+      ...(date && {
+        dateExchange: {
+          $gte: moment.tz(date, "America/Sao_Paulo").utc().toDate(),
+          $lte: moment
+            .tz(new Date().toISOString(), "America/Sao_Paulo")
+            .utc()
+            .toDate(),
+        },
+      }),
     });
 
     return res.status(200).json(

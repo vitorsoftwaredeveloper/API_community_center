@@ -12,7 +12,7 @@ Este é o backend da aplicação Centros Comunitários - Uma solução para faci
 
 ## **Endpoints**
 
-A API tem 13 endpoints listados, sendo possível realizar CRUD de centros comunitários, realizar intercâmbio entre centros comunitários, listar histórico de intercâmbio entre centros, listar centros com ocupação maior que 90% da sua capacidade, calcular a média de recursos presentes em todos os centros, listar recursos, etc.
+A API tem 12 endpoints listados, sendo possível realizar CRUD de centros comunitários, realizar intercâmbio entre centros comunitários, listar histórico de intercâmbio entre centros, listar centros com ocupação maior que 90% da sua capacidade, calcular a média de recursos presentes em todos os centros, listar recursos, etc.
 <br/>
 <br/>
 
@@ -22,7 +22,7 @@ O url base da API é http://localhost:8000
 <br/>
 <br/>
 
-## **Endpoint - communitycenter**
+## **Endpoint - Community Center**
 
 <hr/>
 
@@ -30,13 +30,17 @@ O url base da API é http://localhost:8000
 
 `GET /communitycenter - FORMATO DA REQUISIÇÃO`
 
+Essa requisição irá retornar todos os centros comunitários cadastrados.
+
+<br/>
+
 ```json
 [
   {
     "_id": "66a94a6dac0e39d1d6882be1",
     "name": "Center Historic John Doe",
     "address": "rua zero a esquerda",
-    "localization": "example hahaha",
+    "localization": "example",
     "maxNumberPeople": 3,
     "quantityPeopleOccupation": 3,
     "resource": [
@@ -67,9 +71,58 @@ O url base da API é http://localhost:8000
 
 <br/>
 <br/>
+
+<h2> Buscar centro comunitário pelo id </h2>
+
+`GET /communitycenter/:id - FORMATO DA REQUISIÇÃO`
+
+Essa requisição irá retornar o centros comunitário informado pelo Id.
+
+<br/>
+
+```json
+{
+  "_id": "66a94a6dac3d39d1d6882be1",
+  "name": "Center Historic John Doe",
+  "address": "rua zero a esquerda",
+  "localization": "example",
+  "maxNumberPeople": 3,
+  "quantityPeopleOccupation": 3,
+  "resource": [
+    {
+      "quantity": 2,
+      "refItem": "66a931913f61b00a8261d6f9",
+      "_id": "66abdfa90169370615e13ba6"
+    },
+    {
+      "quantity": 6,
+      "refItem": "66a930e53f61b00a8261d6f5",
+      "_id": "66abdfa90169370615e13ba7"
+    },
+    {
+      "quantity": 4,
+      "refItem": "66a930933f61b00a8261d6f4",
+      "_id": "66abe0040169370615e13bc3"
+    },
+    {
+      "quantity": 4,
+      "refItem": "66a9314e3f61b00a8261d6f8",
+      "_id": "66abe0040169370615e13bc4"
+    }
+  ]
+}
+```
+
+<br/>
+<br/>
+
 <h2 align ='left'> Criação de centro comunitário </h2>
 
 `POST /communitycenter - FORMATO DA REQUISIÇÃO`
+
+<p>A propriedade <strong>resource</strong> representa os recursos disponíveis no centro, sendo necessário informar o id dos recursos que o centro irá possui no momento da criação, bem como, a quantidade que o mesmo possui. A propriedade <strong>maxNumberPeople</strong> representa a quantidade máxima que o centro pode ocupar e a propriedade <strong>quantityPeopleOccupation</strong> representa a quantidade de pessoas presentes no centro.</p>
+
+<br/>
 
 ```json
 {
@@ -95,8 +148,7 @@ O url base da API é http://localhost:8000
 }
 ```
 
-<p>É necessário informar o id dos recursos que o centro irá possui no momento da criação, bem como, a quantidade que o mesmo possui. A propriedade <strong>maxNumberPeople</strong> representa a quantidade máxima que o centro pode ocupar e a propriedade <strong>quantityPeopleOccupation</strong> representa a quantidade de pessoas presentes no centro.</p>
-
+<br>
 <br>
 
 <h2> Removendo centro comunitário </h2>
@@ -110,6 +162,9 @@ O url base da API é http://localhost:8000
 <h2 align ='left'> Atualizando centro comunitário </h2>
 
 `PUT /communitycenter/:id - FORMATO DA REQUISIÇÃO`
+
+<p>Esse endpoint servirá para quaisquer alteração que necessite realizar nos dados do centro comunitário.</p>
+<br/>
 
 ```json
 {
@@ -135,16 +190,17 @@ O url base da API é http://localhost:8000
 }
 ```
 
-<p>Esse endpoint servirá para quaisquer alteração que necessite realizar nos dados do centro comunitário.</p>
 <br/>
 <br/>
 
 <h2 align ='left'> Atualizando a quantidade de pessoas no centro </h2>
 
-Para atualizar a quantidade de pessoas em um centro comunitário, poder-se-á utilizar o endpoint abaixo informando a quantidade atual de pessoas:
-
-`PUT /update/people/:id - `
+`PUT /communitycenter/people/:id - `
 ` FORMATO DA REQUISIÇÃO`
+
+<p>Para atualizar a quantidade de pessoas em um centro comunitário, poder-se-á utilizar este endpoint informando a quantidade atual de pessoas</p>
+
+<br/>
 
 ```json
 {
@@ -155,9 +211,28 @@ Para atualizar a quantidade de pessoas em um centro comunitário, poder-se-á ut
 <br/>
 <br/>
 
-<h2 align = "left"> Intercâmbio </h2>
+## **Endpoint - Intercâmbio**
+
+<hr/>
+
+<br/>
+
+<h2 align = "left"> Realizando Intercâmbio </h2>
 
 `POST /exchange - FORMATO DA REQUISIÇÃO`
+
+<p>Esse endpoint é responvável por realizar o intercâmbio entre dois centros comunitários, onde itens do centro um vão para o centro dois e vice versa. Eles poderam realizar o intercâmbio se, e somente se, a soma dos pontos do itens de um centro for igual ao do outro centro. Por exemplo, 2 voluntários e 1 veículo de transporte (2 x 3 + 1 x 5 = 11), valem o mesmo que 1 médico e 1 kit de suprimentos médicos (1 x 4 + 1 x 7 = 11). Esta regra poderá ser quebrada caso algum centro esteja com ocupação maior que 90%, onde ele poderá oferecer menos recursos que outro centro no intercâmbio. Ao final os itens são transferidos (são decrescidos do centro de origem e somados ao centro de destino) para os centros contabilizando em suas respectivas contagens de recursos.</p>
+
+Significados das propriedades abaixo:
+
+<ul>
+    <li><strong>communityCenterOne</strong> - Id do centro comunitário número 1</li>
+    <li><strong>communityCenterOne</strong> - Id do centro comunitário número 2</li>
+    <li><strong>resourceCCOne</strong> - recursos que o centro comunitário 1 está disposto a intercambiar </li>
+    <li><strong>resourceCCTwo</strong> - recursos que o centro comunitário 2 está disposto a intercambiar </li>
+    <li><strong>quantity</strong> - quantidade de recursos dispostos para o intercâmbio</li>
+    <li><strong>refItem</strong> - id do recurso</li>
+</ul>
 
 ```json
 {
@@ -186,959 +261,210 @@ Para atualizar a quantidade de pessoas em um centro comunitário, poder-se-á ut
 }
 ```
 
-Significados das propriedades acima:
+<br/>
+<br/>
+
+## **Endpoint - Histórico**
+
+<hr/>
+<br/>
+
+<h2 align = "left"> Listar histórico de Intercâmbio </h2>
+
+`GET /historic/:id?date=yyyy-mm-dd hh:MM:ss - FORMATO DA REQUISIÇÃO`
+
+<p>Esse endpoint tem como finalidade listar apenas os intercâmbios realizados por um determinado centro comunitário, como também, é possível filtrar por um datetime do passado até o presente momento.</p>
+
+Significados das query params acima na request:
 
 <ul>
-    <li><strong>communityCenterOne</strong> - Id do centro comunitário número 1</li>
-    <li><strong>communityCenterOne</strong> - Id do centro comunitário número 2</li>
-    <li><strong>resourceCCOne</strong> - recursos que o centro comunitário 1 está disposto a intercambiar </li>
-    <li><strong>resourceCCTwo</strong> - recursos que o centro comunitário 2 está disposto a intercambiar </li>
-    <li><strong>quantity</strong> - quantidade de recursos dispostos para o intercâmbio</li>
-    <li><strong>refItem</strong> - id do recurso</li>
+    <li><strong>yyyy</strong> - ano</li>
+    <li><strong>mm</strong> - mês</li>
+    <li><strong>dd</strong> - dia </li>
+    <li><strong>hh</strong> - horas </li>
+    <li><strong>MM</strong> - minutos</li>
+    <li><strong>ss</strong> - segundos</li>
 </ul>
 
-Caso dê tudo certo, a resposta será assim:
+Significados das propriedades da resposta:
 
-`POST /sessions/ - FORMATO DA RESPOSTA - STATUS 201`
+<ul>
+    <li><strong>communityCenterOne</strong> - centro um que realizou o intercâmbio</li>
+    <li><strong>communityCenterTwo</strong> - centro dois que realizou o intercâmbio</li>
+    <li><strong>dateExchange</strong> - momento da realização do intercâmbio </li>
+    <li><strong>resourceExchangeCenterOne</strong> - lista de recursos cedidos pelo centro um </li>
+    <li><strong>resourceExchangeCenterTwo</strong> - lista de recursos cedidos pelo centro dois</li>
+    <li><strong>quantity</strong> - quantidade de itens cedidos</li>
+    <li><strong>refItem</strong> - id do item cedido</li>
+</ul>
 
-```json
-{
-  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYzODgyMDc3MiwianRpIjoiMDJlMWFkOTllYTAzNDQwNDkyNDQ3MDU1NzFhNGNiOTMiLCJ1c2VyX2lkIjoxOX0.PnzZNt-tZ1IuFfWuViVYHgg48Sdq5Bqu0iqinOHBh00",
-  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM5MTY2MzcyLCJqdGkiOiI4ZWE2ZjJiMWQwZGU0NDJmYTQ1NTBhMDZjZGJlMGRmMCIsInVzZXJfaWQiOjE5fQ.UCTZiSdcxlyNhjqlGhCDann5MmF1taQqqSajKGc-i8A"
-}
-```
-
-Para nós, o que importa será o token "access". O campo "refresh" não é necessário no momento. Sua utilidade é para criar uma estratégia de refresh token para manter o usuário na aplicação, porém ela não se faz necessária no nosso contexto.
-
-Com o token de "access" em mãos, podemos decodificar ele usando a biblioteca jwt-decode para receber o ID do usuário que fez login e manter isso salvo no frontend.
-
-Link para o jwt-decode: https://www.npmjs.com/package/jwt-decode
-
-<h2 align ='left'> Possíveis erros </h2>
-
-Caso você acabe errando e mandando algum campo faltando, a resposta de erro será assim:
-No exemplo a requisição foi feita faltando o campo "password".
-
-`POST /sessions/ - `
-` FORMATO DA RESPOSTA - STATUS 400`
-
-```json
-{
-  "password": ["This field is required."]
-}
-```
-
-Quando tentando acessar com um usuário ou senha inválida:
-
-`POST /sessions/ - `
-` FORMATO DA RESPOSTA - STATUS 401`
-
-```json
-{
-  "detail": "No active account found with the given credentials"
-}
-```
-
-### **Rotas que precisam de autenticação**
-
-<h2> Sobre autenticação </h2>
-
-Rotas que necessitam de autorização deve ser informado no cabeçalho da requisição o campo "Authorization", dessa forma:
-
-> Authorization: Bearer {token}
-
-Sendo que o token, é o campo `access` disponibilizado na resposta do endpoint /sessions/
-
-Caso você tente acessar qualquer endpoint que necessite de autorização, sem passar o token, irá receber o seguinte erro:
-
-`STATUS 401`
-
-```json
-{
-  "detail": "Authentication credentials were not provided."
-}
-```
-
-<h2 align ='left'> Atualização de usuário </h2>
-
-Para atualizar um usuário, é necessário um PATCH em /users/:user_id. O id será um inteiro que pode ser descoberto usando o jwt-decode mencionado acima. É possível atualizar para um novo username ainda não utilizado ou atualizar o email.
-
-`PATCH /users/:user_id/ - FORMATO DA REQUISIÇÃO`
-
-```json
-{
-  "username": "gabriel-kenzie-new",
-  "email": "gabriel-new@kenzie.com.br"
-}
-```
-
-Caso dê tudo certo, a resposta será assim:
-
-`PATCH /users/:user_id/ - FORMATO DA RESPOSTA - STATUS 200`
-
-```json
-{
-  "id": 19,
-  "username": "gabriel-kenzie-new",
-  "email": "gabriel-new@kenzie.com.br"
-}
-```
-
-<h2 align ='left'> Possíveis erros </h2>
-
-É possível receber um erro quando tentar atualizar um perfil que não corresponde com o token informado na autorização. Ou seja = o token deve ser do usuário que está tentando atualizar o perfil.
-
-`PATCH /users/:user_id/ - FORMATO DA RESPOSTA - STATUS 401`
-
-```json
-{
-  "status": "error",
-  "message": "Only the owner of the profile can update his own information"
-}
-```
-
-Tentando atualizar para um username que já está em uso.
-
-`PATCH /users/:user_id/ - FORMATO DA RESPOSTA - STATUS 401`
-
-```json
-{
-  "username": ["A user with that username already exists."]
-}
-```
-
-## **Endpoints - Habits**
-
-Os endpoints de hábitos, é uma seção para a aplicação ser algo pessoal, voltado para o usuário criar sua rotina de hábitos e atualizar conforme avança nisso.
-Na criação do seu frontend, você irá determinar como essas seções podem funcionar e criar sua própria regra de negócio.
-
-:warning: **Importante: Toda essa parte de hábitos necessita de autenticação.**
-
-<h2 align ='left'> Criação de hábitos </h2>
-
-`POST /habits/ - FORMATO DA REQUISIÇÃO`
-
-```json
-{
-  "title": "Calistenia a tarde (15 minutos)",
-  "category": "Sáude",
-  "difficulty": "Muito díficil",
-  "frequency": "Diária",
-  "achieved": false,
-  "how_much_achieved": 30,
-  "user": 673
-}
-```
-
-:warning: **Importante: O Campo `user` recebe o user_id que você deve decodificar do token jwt.**
-
-Esse campo irá relacionar o hábito que você está criando com o usuário que recebe ele, que deverá ser o usuário logado na sua aplicação.
-
-OBS: o campo `how_much_achieved` e `achieved`, não são relacionados, sinta-se a vontade para criar uma regra de negócio de como isso pode se comportar no seu frontend.
-
-Caso dê tudo certo, a resposta será assim:
-
-`POST /habits/ - FORMATO DA RESPOSTA - STATUS 201`
-
-```json
-{
-  "id": 2607,
-  "title": "Calistenia a tarde (15 minutos)",
-  "category": "Sáude",
-  "difficulty": "Muito díficil",
-  "frequency": "Diária",
-  "achieved": false,
-  "how_much_achieved": 30,
-  "user": 673
-}
-```
-
-<h2 align ='left'> Buscando hábitos </h2>
-
-`GET /habits/personal/ - FORMATO DA RESPOSTA - STATUS 201`
+<br/>
 
 ```json
 [
   {
-    "id": 2607,
-    "title": "Calistenia a tarde (15 minutos)",
-    "category": "Sáude",
-    "difficulty": "Muito díficil",
-    "frequency": "Diária",
-    "achieved": false,
-    "how_much_achieved": 30,
-    "user": 673
+    "communityCenterOne": "66a94a6dac0e39d1d6882be1",
+    "communityCenterTwo": "66a9594e7c4db129fe34a3ba",
+    "dateExchange": "2024-08-02 07:38:01",
+    "resourceExchangeCenterOne": [
+      {
+        "quantity": 2,
+        "refItem": "66a931913f61b00a8261d6f9",
+        "_id": "66acb72ac97b88837a992e59"
+      },
+      {
+        "quantity": 1,
+        "refItem": "66a930e53f61b00a8261d6f5",
+        "_id": "66acb72ac97b88837a992e5a"
+      }
+    ],
+    "resourceExchangeCenterTwo": [
+      {
+        "quantity": 1,
+        "refItem": "66a930933f61b00a8261d6f4",
+        "_id": "66acb72ac97b88837a992e5b"
+      },
+      {
+        "quantity": 1,
+        "refItem": "66a9314e3f61b00a8261d6f8",
+        "_id": "66acb72ac97b88837a992e5c"
+      }
+    ]
   }
 ]
 ```
 
-Irá buscar os hábitos cadastrados anteriormente, que foram relacionados usando o campo `user` na hora da criação.
+<br/>
+<br/>
 
-<h2> Atualizar um hábito </h2>
+## **Endpoint - Relatórios**
 
-`PATCH /habits/:habit_id/ - FORMATO DA REQUISIÇÃO`
+<hr/>
+<br/>
 
-```json
-{
-  "achieved": true,
-  "how_much_achieved": 100
-}
-```
+<h2 align = "left"> Listar centros comunitários com ocupação maior que 90%</h2>
 
-`PATCH /habits/:habit_id/ - FORMATO DA RESPOSTA - STATUS 200`
+`GET /reportstuffed - FORMATO DA REQUISIÇÃO`
 
-```json
-{
-  "id": 2607,
-  "title": "Calistenia a tarde (15 minutos)",
-  "category": "Sáude",
-  "difficulty": "Muito díficil",
-  "frequency": "Diária",
-  "achieved": true,
-  "how_much_achieved": 100,
-  "user": 673
-}
-```
+<p>Esse endpoint tem como finalidade listar todos os centros comunitários com ocupação de pessoas maior que 90% de sua capacidade máxima. Perceba a propriedade 
+<strong>maxNumberPeople</strong> determina a quantidade máxima de pessoas que um centro suporta e a propriedade <strong>quantityPeopleOccupation</strong> define quando um centro está com ocupação maior que 90%.</p>
 
-<h2> Deletar um hábito </h2>
-
-Para deletar um hábito, basta fazer um DELETE usando o id dele.
-
-`DELETE /habits/:habit_id/ - FORMATO DA RESPOSTA - STATUS 204`
-
-<h2 align ='left'> Possíveis erros </h2>
-
-É possível receber um erro ao tentar deletar um hábito inexistente.
-
-`DELETE /habits/:habit_id/ - FORMATO DA RESPOSTA - STATUS 404`
-
-```json
-{
-  "detail": "Not found."
-}
-```
-
-## **Endpoints - Groups**
-
-Os endpoints de grupos, é uma seção para a aplicação ser algo voltado para conexão entre usuários da aplicação. Dentro dessa parte o usuário pode criar grupos ou procurar grupos existentes para se inscrever e acompanhar as metas e atividades dos grupos que está inscrito.
-
-:warning: **Importante: Toda essa parte de grupos necessita de autenticação.**
-
-<h2> Listando grupos </h2>
-
-Na listagem de grupos, é recebido 15 itens por vez. Sua paginação é feita pelo query param `page=integer`.
-
-Pode ser passado diversos query params nesse endpoint para realizar filtros na resposta.
-
-`search=string` - Usando o search, será buscado nos resultados por nome, descrição e categoria.<br/>
-`category=string` - Usando apenas category, é possível filtrar apenas pela categoria.
-
-Isso possibilita que sua aplicação seja nichada por uma categoria ou geral, isso é uma escolha que os dev's frontend podem fazer utilizando essa API.
-
-`GET /groups/ - FORMATO DA REQUISIÇÃO - STATUS 200`
-
-Resposta:
-
-```json
-{
-  "count": 762,
-  "next": "https://kenzie-habits.herokuapp.com/groups/?page=2",
-  "previous": null,
-  "results": [
-    {
-      "id": 4,
-      "name": "Cow de Wars",
-      "description": "fgdgdfgfdgf",
-      "category": "Saúde",
-      "creator": {
-        "id": 13,
-        "username": "KenzoTeste",
-        "email": ""
-      },
-      "users_on_group": [
-        {
-          "id": 1,
-          "username": "gabriel",
-          "email": "gabriel@gmail.com"
-        },
-        {
-          "id": 4,
-          "username": "exe",
-          "email": "exe@email.com"
-        },
-        {
-          "id": 58,
-          "username": "teste202100",
-          "email": "teste202100@gmail.com"
-        },
-        {
-          "id": 145,
-          "username": "testestandinho",
-          "email": "tetest@hothot.com"
-        },
-        {
-          "id": 302,
-          "username": "miaferrari19",
-          "email": "mia@gmail.com"
-        },
-        {
-          "id": 566,
-          "username": "kenzinhooo",
-          "email": "kenzinhooo@mail.com"
-        },
-        {
-          "id": 568,
-          "username": "pinguim2",
-          "email": "pinguim@teste.com"
-        },
-        {
-          "id": 599,
-          "username": "monicaSilva",
-          "email": "nica@mail.com"
-        },
-        {
-          "id": 668,
-          "username": "VictorTeste2",
-          "email": "victor@teste.com.br"
-        }
-      ],
-      "goals": [
-        {
-          "id": 753,
-          "title": "Nenhuma falta na academia",
-          "difficulty": "Díficil",
-          "achieved": false,
-          "how_much_achieved": 10,
-          "group": 4
-        },
-        {
-          "id": 148,
-          "title": "Eu consigo voar",
-          "difficulty": "Díficil",
-          "achieved": false,
-          "how_much_achieved": 60,
-          "group": 4
-        }
-      ],
-      "activities": [
-        {
-          "id": 210,
-          "title": "re",
-          "realization_time": "2021-10-19T13:33:00Z",
-          "group": 4
-        },
-        {
-          "id": 212,
-          "title": "test",
-          "realization_time": "2021-10-20T13:47:00Z",
-          "group": 4
-        },
-        {
-          "id": 220,
-          "title": "Natação profunda em Java",
-          "realization_time": "2021-03-10T15:00:00Z",
-          "group": 4
-        },
-        {
-          "id": 221,
-          "title": "Natação profunda em Flask Django",
-          "realization_time": "2021-03-10T15:00:00Z",
-          "group": 4
-        },
-        {
-          "id": 361,
-          "title": "Spring Boot",
-          "realization_time": "1945-12-20T21:47:00Z",
-          "group": 4
-        },
-        {
-          "id": 840,
-          "title": "Estocar Vento",
-          "realization_time": "2069-11-15T00:00:00Z",
-          "group": 4
-        },
-        {
-          "id": 211,
-          "title": "test",
-          "realization_time": "2021-10-20T13:44:00Z",
-          "group": 4
-        }
-      ]
-    },
-    {
-      "id": 11,
-      "name": "Grupo de Estudo",
-      "description": "Descrição bolada 3",
-      "category": "Educação 2",
-      "creator": {
-        "id": 16,
-        "username": "roberto_doidão",
-        "email": "roberto9999@gmail.com"
-      },
-      "users_on_group": [
-        {
-          "id": 24,
-          "username": "teste98",
-          "email": "teste1@email.com"
-        },
-        {
-          "id": 16,
-          "username": "roberto_doidão",
-          "email": "roberto9999@gmail.com"
-        },
-        {
-          "id": 91,
-          "username": "maurice",
-          "email": "maurice@email.com"
-        },
-        {
-          "id": 120,
-          "username": "nvouser74",
-          "email": "novimuser@hothot.com"
-        },
-        {
-          "id": 269,
-          "username": "tester",
-          "email": "test@ndo.com"
-        },
-        {
-          "id": 304,
-          "username": "pinguim",
-          "email": "asdf@hotmail.com"
-        },
-        {
-          "id": 325,
-          "username": "laris",
-          "email": "lari@teste.com"
-        },
-        {
-          "id": 555,
-          "username": "chico",
-          "email": "chico@ka.br"
-        },
-        {
-          "id": 566,
-          "username": "kenzinhooo",
-          "email": "kenzinhooo@mail.com"
-        },
-        {
-          "id": 626,
-          "username": "macacoloucoo",
-          "email": "oi@oi.com"
-        }
-      ],
-      "goals": [
-        {
-          "id": 796,
-          "title": "asd",
-          "difficulty": "Regular",
-          "achieved": false,
-          "how_much_achieved": 10,
-          "group": 11
-        },
-        {
-          "id": 792,
-          "title": "asddsa",
-          "difficulty": "Regular",
-          "achieved": false,
-          "how_much_achieved": 40,
-          "group": 11
-        }
-      ],
-      "activities": []
-    },
-    {
-      "id": 30,
-      "name": "Natação",
-      "description": "Descrição bolada",
-      "category": "Saúde",
-      "creator": {
-        "id": 55,
-        "username": "moisesgaioli",
-        "email": "moises@gmail.com"
-      },
-      "users_on_group": [
-        {
-          "id": 35,
-          "username": "herteste",
-          "email": "teste@gmail.com"
-        },
-        {
-          "id": 156,
-          "username": "felipeSilveira",
-          "email": "felipelarson@gmail.com"
-        },
-        {
-          "id": 469,
-          "username": "jerlysson",
-          "email": "eunovo@hot.com"
-        },
-        {
-          "id": 34,
-          "username": "DevRafael",
-          "email": "devrafael@gmail.com"
-        },
-        {
-          "id": 610,
-          "username": "Nhocco",
-          "email": "alesilvasp@gmail.com"
-        }
-      ],
-      "goals": [],
-      "activities": []
-    }
-  ]
-}
-```
-
-Dentro da listagem, temos as informações do grupo, dos usuários que estão no grupo, as atividades do grupo e suas metas. Também o criador do grupo.
-
-<h2> Criando um grupo </h2>
-
-Para criar um grupo, basta enviar no endpoint as informações de nome, descrição e categoria no body da requisição.
-
-`POST /groups/ - FORMATO DA REQUISIÇÃO `
-
-```json
-{
-  "name": "Grupo de leitura",
-  "description": "Somos um grupo de leitura focado em auto ajuda.",
-  "category": "Leitura"
-}
-```
-
-`POST /groups/ - FORMATO DA RESPOSTA - STATUS 201`
-
-```json
-{
-  "id": 849,
-  "name": "Grupo de leitura",
-  "description": "Somos um grupo de leitura focado em auto ajuda.",
-  "category": "Leitura",
-  "creator": 673,
-  "users_on_group": [673],
-  "goals": [],
-  "activities": []
-}
-```
-
-Após criar um grupo, o criador é automaticamente inserido no array `users_on_group`
-
-<h2> Editando um grupo </h2>
-
-Para editar o grupo, você deve ser o criador dele, caso contrário não será possível. É possível editar o nome, descrição e categoria.
-
-`PATCH /groups/:group_id/ - FORMATO DA REQUISIÇÃO `
-
-```json
-{
-  "name": "Grupo de leitura atualizado"
-}
-```
-
-`PATCH /groups/:group_id/ - FORMATO DA RESPOSTA - STATUS 201`
-
-```json
-{
-  "id": 849,
-  "name": "Grupo de leitura",
-  "description": "Somos um grupo de leitura focado em auto ajuda.",
-  "category": "Grupo atualizado",
-  "creator": {
-    "id": 673,
-    "username": "gabriel-kenzie",
-    "email": "gabriel@kenzie.com.br"
-  },
-  "users_on_group": [
-    {
-      "id": 673,
-      "username": "gabriel-kenzie",
-      "email": "gabriel@kenzie.com.br"
-    }
-  ],
-  "goals": [],
-  "activities": []
-}
-```
-
-<h2> Possíveis erros </h2>
-
-Tentando editar um grupo no qual o usuário logado não é o criador.
-
-`PATCH /groups/:group_id/ - FORMATO DA REQUISIÇÃO `
-
-```json
-{
-  "name": "Grupo de leitura atualizado"
-}
-```
-
-`PATCH /groups/:group_id/ - FORMATO DA RESPOSTA - STATUS 201`
-
-```json
-{
-  "status": "error",
-  "message": "Only the group creator can update the group"
-}
-```
-
-<h2> Se inscrevendo em um grupo </h2>
-
-É possível se inscrever em qualquer grupo cadastrado, utilizando a seguinte requisição:
-
-Não é necessário um corpo da requisição.
-
-`POST /groups/:group_id/subscribe`
-
-Caso dê tudo certo:
-
-```json
-{
-  "message": "User inserted on group",
-  "user": {
-    "id": 19,
-    "username": "araujooj",
-    "email": "gabriel@gmail.com"
-  }
-}
-```
-
-<h2> Possíveis erros </h2>
-
-Tentando se inscrever em um grupo que já está inscrito.
-
-`POST /groups/:group_id/subscribe`
-
-```json
-{
-  "message": "User already on group"
-}
-```
-
-<h2> Buscando inscrições </h2>
-
-É possível buscar na API os grupos no qual o usuário logado está inscrito.
-
-`GET /groups/subscriptions/ - FORMATO DA RESPOSTA - STATUS 200`
+<br/>
 
 ```json
 [
   {
-    "id": 847,
-    "name": "Grupo novo 2",
-    "description": "Descrição bolada",
-    "category": "Saúde",
-    "creator": {
-      "id": 673,
-      "username": "gabriel-kenzie",
-      "email": "gabriel@kenzie.com.br"
-    },
-    "users_on_group": [
+    "_id": "66a94a6dac0e39d1d6882be1",
+    "name": "Center Historic John Doe",
+    "address": "rua zero a esquerda",
+    "localization": "example hahaha",
+    "maxNumberPeople": 3,
+    "quantityPeopleOccupation": 2,
+    "resource": [
       {
-        "id": 673,
-        "username": "gabriel-kenzie",
-        "email": "gabriel@kenzie.com.br"
-      }
-    ],
-    "goals": [],
-    "activities": []
-  },
-  {
-    "id": 849,
-    "name": "Grupo de leitura",
-    "description": "Somos um grupo de leitura focado em auto ajuda.",
-    "category": "Grupo atualizado",
-    "creator": {
-      "id": 673,
-      "username": "gabriel-kenzie",
-      "email": "gabriel@kenzie.com.br"
-    },
-    "users_on_group": [
+        "quantity": 5,
+        "refItem": "66a930e53f61b00a8261d6f5",
+        "_id": "66abdfa90169370615e13ba7"
+      },
       {
-        "id": 673,
-        "username": "gabriel-kenzie",
-        "email": "gabriel@kenzie.com.br"
-      }
-    ],
-    "goals": [],
-    "activities": []
-  },
-  {
-    "id": 848,
-    "name": "Grupo de leitura",
-    "description": "Somos um grupo de leitura focado em auto ajuda.",
-    "category": "Livros",
-    "creator": {
-      "id": 673,
-      "username": "gabriel-kenzie",
-      "email": "gabriel@kenzie.com.br"
-    },
-    "users_on_group": [
+        "quantity": 5,
+        "refItem": "66a930933f61b00a8261d6f4",
+        "_id": "66abe0040169370615e13bc3"
+      },
       {
-        "id": 673,
-        "username": "gabriel-kenzie",
-        "email": "gabriel@kenzie.com.br"
+        "quantity": 5,
+        "refItem": "66a9314e3f61b00a8261d6f8",
+        "_id": "66abe0040169370615e13bc4"
       }
-    ],
-    "goals": [],
-    "activities": []
+    ]
   }
 ]
 ```
 
-<h2> Se desinscrevendo de um grupo </h2>
+<br/>
+<br/>
 
-É possível sair de um grupo que o usuário está inscrito
+`GET /reportaverage - FORMATO DA REQUISIÇÃO`
 
-`DELETE /groups/:group_id/unsubscribe`
+<p>Esse endpoint tem como finalidade calcular a quantidade média dos itens que os centros possuem. Caso algum item, não esteja em nenhum centro, ele não entrará no cálculo.</p>
 
-<h2> Possíveis erros </h2>
-
-Tentando se desinscrever de um grupo que não está inscrito
-
-```json
-{
-  "message": "User not on group"
-}
-```
-
-## **Endpoints - Goals**
-
-Essa seção da API é para a criação de metas para o grupo todo seguir. Elas funcionam de maneira parecida com o endpoint de habits, porém com o intuito de ser algo que o grupo especificado irá seguir.
-
-### **:warning: IMPORTANTE! Metas e atividades não são relacionadas entre si na API. Apenas são relacionadas com o grupo.**
-
-:warning: **Importante: Toda a parte de goals necessita de autenticação.**
-
-<h2> Criando metas </h2>
-
-`POST - /goals/ - FORMATO DA REQUISIÇÃO`
+<br/>
 
 ```json
 {
-  "title": "Nenhuma falta na academia cometida pelos membros do grupo na semana",
-  "difficulty": "Díficil",
-  "how_much_achieved": 100,
-  "achieved": false,
-  "group": 3
+  "message": "6 Voluntário, 3 Médico, 3 Kit de suprimentos médicos, 6 Veículo de transporte, por centro."
 }
 ```
 
-É importante que o `group`, tenha o id do grupo que será cadastrado determinada meta.
+<br/>
+<br/>
 
-`POST /goals/ - FORMATO DA RESPOSTA - STATUS 201`
+## **Endpoint - Recursos**
+
+<hr/>
+<br/>
+
+<h2 align = "left"> Listar recursos</h2>
+
+`GET /resource - FORMATO DA REQUISIÇÃO`
+
+<p>Esse endpoint retorna todos os recursos que os centros podem utilizar em seus intercâmbios.</p>
+
+<br/>
+
+```json
+[
+  {
+    "_id": "66a930933f61b00a8261d6f4",
+    "item": "Médico",
+    "points": 4
+  },
+  {
+    "_id": "66a930e53f61b00a8261d6f5",
+    "item": "Voluntário",
+    "points": 3
+  },
+  {
+    "_id": "66a9314e3f61b00a8261d6f8",
+    "item": "Kit de suprimentos médicos",
+    "points": 7
+  },
+  {
+    "_id": "66a931913f61b00a8261d6f9",
+    "item": "Veículo de transporte",
+    "points": 5
+  },
+  {
+    "_id": "66a931bd3f61b00a8261d6fa",
+    "item": "Cesta básica",
+    "points": 2
+  }
+]
+```
+
+<br/>
+<br/>
+
+<hr/>
+<br/>
+
+<h2 align = "left"> Listar recurso por id</h2>
+
+`GET /resource/:id - FORMATO DA REQUISIÇÃO`
+
+<p>Esse endpoint retorna um recurso específico informado pelo id.</p>
+
+<br/>
 
 ```json
 {
-  "id": 848,
-  "title": "Nenhuma falta na academia cometida pelos membros do grupo na semana",
-  "difficulty": "Díficil",
-  "achieved": false,
-  "how_much_achieved": 0,
-  "group": 3
+  "_id": "66a9314e3f61b00a8261d6f8",
+  "item": "Kit de suprimentos médicos",
+  "points": 7
 }
 ```
 
-<h2> Possíveis erros </h2>
+<br/>
+<br/>
 
-Tentando cadastrar uma meta para um grupo inexistente
-
-`POST /goals/ - FORMATO DA RESPOSTA - STATUS 400`
-
-```json
-{
-  "group": ["Invalid pk \"1\" - object does not exist."]
-}
-```
-
-<h2> Buscando metas </h2>
-
-Para buscar metas, devemos informar no query param `group`, qual será o grupo que iremos buscar as metas.
-Essas informações também estão disponíveis no GET em `/groups/:group_id`.
-
-Porém, por esse endpoint é possível fazer a paginação dos itens
-
-`GET /goals/?group=4 - FORMATO DA RESPOSTA - STATUS 200`
-
-```json
-{
-  "count": 2,
-  "next": null,
-  "previous": null,
-  "results": [
-    {
-      "id": 753,
-      "title": "Nenhuma falta na academia",
-      "difficulty": "Díficil",
-      "achieved": false,
-      "how_much_achieved": 10,
-      "group": 4
-    },
-    {
-      "id": 148,
-      "title": "Eu consigo voar",
-      "difficulty": "Díficil",
-      "achieved": false,
-      "how_much_achieved": 60,
-      "group": 4
-    }
-  ]
-}
-```
-
-<h2> Atualizando metas </h2>
-Para atualizar uma meta, é necessário enviar o id da meta que está dentro do seu objeto.
-
-`PATCH /goals/:goal_id/ - FORMATO DA REQUISIÇÃO`
-
-```json
-{
-  "achieved": true
-}
-```
-
-`PATCH /goals/:goal_id/ - FORMATO DA RESPOSTA - STATUS 200`
-
-```json
-{
-  "id": 753,
-  "title": "Nenhuma falta na academia",
-  "difficulty": "Díficil",
-  "achieved": true,
-  "how_much_achieved": 10,
-  "group": 4
-}
-```
-
-<h2> Possíveis erros </h2>
-
-Tentando atualizar uma meta que não existe
-
-`PATCH /goals/:goal_id/ - FORMATO DA RESPOSTA - STATUS 404`
-
-```json
-{
-  "detail": "Not found."
-}
-```
-
-<h2> Deletar uma meta <h2>
-
-Para deletar uma meta, basta fazer um DELETE usando o id dela.
-
-`DELETE /goals/:goal_id/ - FORMATO DA RESPOSTA - STATUS 204`
-
-## **Endpoints - Activities**
-
-Essa seção da API é para a criação de atividades para o grupo. As atividades são totalmente determinadas a partir do frontend e os campos que são passados são apenas seu título e quando ela será realizada.
-
-Por exemplo um grupo de academia teria atividades relacionadas a exercícios que seriam feitos em grupo.
-Um grupo de leitura teria uma atividade de discutir sobre os livros lidos da semana.
-
-### **:warning: IMPORTANTE! Metas e atividades não são relacionadas entre si na API. Apenas são relacionadas com o grupo.**
-
-<h2> Criando atividades </h2>
-
-`POST - /activities/ - FORMATO DA REQUISIÇÃO`
-
-```json
-{
-  "title": "Treino funcional na praia",
-  "realization_time": "2021-03-10T15:00:00Z",
-  "group": 2
-}
-```
-
-É importante que o `group`, tenha o id do grupo que será cadastrado determinada atividade.
-
-`POST /activities/ - FORMATO DA RESPOSTA - STATUS 201`
-
-```json
-{
-  "id": 918,
-  "title": "Treino funcional na praia",
-  "realization_time": "2021-03-10T15:00:00Z",
-  "group": 753
-}
-```
-
-<h2> Possíveis erros </h2>
-
-Tentando cadastrar uma atividade para um grupo inexistente
-
-`POST /activities/ - FORMATO DA RESPOSTA - STATUS 400`
-
-```json
-{
-  "group": ["Invalid pk \"1\" - object does not exist."]
-}
-```
-
-<h2> Buscando atividades </h2>
-
-Para buscar atividades, devemos informar no query param `group`, qual será o grupo que iremos buscar as atividades.
-Essas informações também estão disponíveis no GET em `/groups/:group_id`.
-
-Porém, por esse endpoint é possível fazer a paginação dos itens
-
-`GET /activities/?group=4 - FORMATO DA RESPOSTA - STATUS 200`
-
-```json
-{
-  "count": 1,
-  "next": null,
-  "previous": null,
-  "results": [
-    {
-      "id": 918,
-      "title": "Treino funcional na praia",
-      "realization_time": "2021-03-10T15:00:00Z",
-      "group": 753
-    }
-  ]
-}
-```
-
-<h2> Atualizando atividades </h2>
-Para atualizar uma atividade, é necessário enviar o id da atividade que está dentro do seu objeto.
-
-`PATCH /activities/:activity_id/ - FORMATO DA REQUISIÇÃO`
-
-```json
-{
-  "title": "Treino funcional na praia - Atualizado"
-}
-```
-
-`PATCH /activities/:activity_id/ - FORMATO DA RESPOSTA - STATUS 200`
-
-```json
-{
-  "id": 918,
-  "title": "Treino funcional na praia - atualizado",
-  "realization_time": "2021-03-10T15:00:00Z",
-  "group": 753
-}
-```
-
-<h2> Possíveis erros </h2>
-
-Tentando atualizar uma atividade que não existe
-
-`PATCH /activities/:activity_id/ - FORMATO DA RESPOSTA - STATUS 404`
-
-```json
-{
-  "detail": "Not found."
-}
-```
-
-<h2> Deletar uma atividade </h2>
-
-Para deletar uma atividade, basta fazer um DELETE usando o id dela.
-
-`DELETE /activities/:activity_id/ - FORMATO DA RESPOSTA - STATUS 204`
-
----
-
-Feito com ♥ by araujooj :wave:
+Feito com ♥ by Vitor Soares Ferreira

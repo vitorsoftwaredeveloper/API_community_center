@@ -56,7 +56,7 @@ class ReportController {
     }
 
     const formatStringResponse = formatListAverage.reduce((acc, resource) => {
-      return (acc += `${resource.average.toFixed(2)} ${resource.item}, `);
+      return (acc += `${Math.floor(resource.average)} ${resource.item}, `);
     }, "");
 
     return res
