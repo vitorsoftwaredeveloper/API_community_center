@@ -31,8 +31,14 @@ class CommunityCenterController {
 
     newCommunityCenter.save((err) => {
       if (err) {
+        if (err?.type === "ZodError") {
+          return res.status(400).send({
+            message: `${err.message}`,
+          });
+        }
+
         return res.status(500).send({
-          message: `${err.message} - falha ao cadastrar Centro comunitário`,
+          message: `${err.message}`,
         });
       } else {
         return res.status(201).send(newCommunityCenter.toJSON());

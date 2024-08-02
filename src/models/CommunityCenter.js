@@ -1,4 +1,20 @@
 import mongoose from "mongoose";
+import { z } from "zod";
+
+const communitySchemaZod = z.object({
+  name: z.string({ required_error: "Field name is required" }),
+  address: z.string({ required_error: "Field address is required" }),
+  localization: z.string({
+    required_error: "Field localization is required",
+  }),
+  maxNumberPeople: z.number({
+    required_error: "Field maxNumberPeople is required",
+  }),
+  quantityPeopleOccupation: z
+    .number()
+    .int()
+    .nonnegative("Age must be a non-negative number"),
+});
 
 const communityCenterSchema = mongoose.Schema(
   {
@@ -23,6 +39,28 @@ const communityCenterSchema = mongoose.Schema(
     versionKey: false,
   }
 );
+
+const formatResponseErrorValidat = (error) => {
+  return error
+    .reduce((acc, error) => {
+      return (acc += error.message + " / ");
+    }, "")
+    .slice(0, -2);
+};
+
+communityCenterSchema.pre("save", function (next) {
+  const comunity = this;
+
+  const result = communitySchemaZod.safeParse(comunity.toObject());
+  if (!result.success) {
+    const error = new Error("");
+    error.type = "ZodError";
+    error.message = formatResponseErrorValidat(result.error.errors);
+
+    return next(error);
+  }
+  next();
+});
 
 export const communitycenter = mongoose.model(
   "communitycenter",
