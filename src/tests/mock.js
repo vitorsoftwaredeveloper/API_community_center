@@ -8,8 +8,8 @@ const CENTER_ONE = {
   name: "Integration Test Center 1",
   address: "example",
   localization: "example",
-  maxNumberPeople: 10,
-  quantityPeopleOccupation: 9,
+  maxNumberPeople: 20,
+  quantityPeopleOccupation: 10,
   resource: [
     {
       quantity: 10,
@@ -26,8 +26,8 @@ const CENTER_TWO = {
   name: "Integration Test Center 2",
   address: "example",
   localization: "example",
-  maxNumberPeople: 10,
-  quantityPeopleOccupation: 9,
+  maxNumberPeople: 20,
+  quantityPeopleOccupation: 10,
   resource: [
     {
       quantity: 10,

@@ -190,19 +190,12 @@ class ExchangeController {
       centerTwo.maxNumberPeople * 0.9
     );
 
-    const percentageOccupancyCenterOne = Math.ceil(
-      centerOne.quantityPeopleOccupation * 0.9
-    );
-    const percentageOccupancyCenterTwo = Math.ceil(
-      centerTwo.quantityPeopleOccupation * 0.9
-    );
-
-    const notIgnoreSumPointsFromItemsIfCenterHas90PercentageOccupation =
-      percentageOccupancyCenterOne >= percentageAcceptableCenterOne ||
-      percentageOccupancyCenterTwo >= percentageAcceptableCenterTwo;
+    const ignoreSumPointsFromItemsIfCenterHas90PercentageOccupation =
+      centerOne.quantityPeopleOccupation >= percentageAcceptableCenterOne ||
+      centerTwo.quantityPeopleOccupation >= percentageAcceptableCenterTwo;
 
     if (sumPointsExchangeCenterOne !== sumPointsExchangeCenterTwo) {
-      if (notIgnoreSumPointsFromItemsIfCenterHas90PercentageOccupation) {
+      if (!ignoreSumPointsFromItemsIfCenterHas90PercentageOccupation) {
         return res.status(400).send({
           message: `Community center's '${centerOne.name}' and '${centerTwo.name}' they do not have comparable resources for exchange!`,
         });

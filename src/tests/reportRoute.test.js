@@ -10,8 +10,11 @@ beforeEach(async () => {
   const porta = 4000;
   servidor = app.listen(porta);
 
-  centerOneId = (await request(app).post("/communitycenter").send(CENTER_ONE))
-    .body._id;
+  centerOneId = (
+    await request(app)
+      .post("/communitycenter")
+      .send({ ...CENTER_ONE, quantityPeopleOccupation: 18 })
+  ).body._id;
 });
 
 afterEach(async () => {
