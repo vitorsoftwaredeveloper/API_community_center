@@ -1,5 +1,18 @@
 import mongoose from "mongoose";
 import { z } from "zod";
+import { resources } from "../constants/index.js";
+
+const resourceSchemaZod = z.object({
+  item: z.string({
+    required_error: "Field item is required in the resource list",
+  }),
+  quantity: z
+    .number({
+      required_error: "Field quantity is required in the resource list",
+    })
+    .int()
+    .nonnegative("quantity item must be a non-negative number"),
+});
 
 const communitySchemaZod = z.object({
   name: z.string({ required_error: "Field name is required" }),
@@ -14,6 +27,7 @@ const communitySchemaZod = z.object({
     .number()
     .int()
     .nonnegative("quantityPeopleOccupation must be a non-negative number"),
+  resource: z.array(resourceSchemaZod),
 });
 
 const communityCenterSchema = mongoose.Schema(
@@ -24,16 +38,13 @@ const communityCenterSchema = mongoose.Schema(
     localization: { type: String },
     maxNumberPeople: { type: Number },
     quantityPeopleOccupation: { type: Number, default: 0 },
-    resource: [
-      {
-        quantity: { type: Number },
-        refItem: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "resource",
-          required: true,
-        },
-      },
-    ],
+    resource: {
+      type: Array,
+      default: resources.map((element) => ({
+        name: element.item,
+        quantity: 0,
+      })),
+    },
   },
   {
     versionKey: false,

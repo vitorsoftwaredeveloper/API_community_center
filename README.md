@@ -36,32 +36,28 @@ Essa requisição irá retornar todos os centros comunitários cadastrados.
 ```json
 [
   {
-    "_id": "66a94a6dac0e39d1d6882be1",
-    "name": "Center Historic John Doe",
-    "address": "rua zero a esquerda",
+    "_id": "66ad6c5682b9e799fe9d1507",
+    "name": "Teste Center 1",
+    "address": "example",
     "localization": "example",
-    "maxNumberPeople": 3,
-    "quantityPeopleOccupation": 3,
+    "maxNumberPeople": 20,
+    "quantityPeopleOccupation": 18,
     "resource": [
       {
-        "quantity": 7,
-        "refItem": "66a931913f61b00a8261d6f9",
-        "_id": "66aa82e6358ba874d3a83f59"
+        "item": "Kit de suprimentos médicos",
+        "quantity": 99
       },
       {
-        "quantity": 6,
-        "refItem": "66a930e53f61b00a8261d6f5",
-        "_id": "66aa82e6358ba874d3a83f5a"
+        "item": "Médico",
+        "quantity": 99
       },
       {
-        "quantity": 3,
-        "refItem": "66a930933f61b00a8261d6f4",
-        "_id": "66aa8303358ba874d3a83f6b"
+        "quantity": 1,
+        "item": "Veículo de transporte"
       },
       {
-        "quantity": 3,
-        "refItem": "66a9314e3f61b00a8261d6f8",
-        "_id": "66aa8303358ba874d3a83f6c"
+        "quantity": 2,
+        "item": "Voluntário"
       }
     ]
   }
@@ -81,32 +77,28 @@ Essa requisição irá retornar o centros comunitário informado pelo Id.
 
 ```json
 {
-  "_id": "66a94a6dac3d39d1d6882be1",
-  "name": "Center Historic John Doe",
-  "address": "rua zero a esquerda",
+  "_id": "66ad6c5682b9e799fe9d1507",
+  "name": "Teste Center 1",
+  "address": "example",
   "localization": "example",
-  "maxNumberPeople": 3,
-  "quantityPeopleOccupation": 3,
+  "maxNumberPeople": 20,
+  "quantityPeopleOccupation": 18,
   "resource": [
     {
+      "item": "Kit de suprimentos médicos",
+      "quantity": 99
+    },
+    {
+      "item": "Médico",
+      "quantity": 99
+    },
+    {
+      "quantity": 1,
+      "item": "Veículo de transporte"
+    },
+    {
       "quantity": 2,
-      "refItem": "66a931913f61b00a8261d6f9",
-      "_id": "66abdfa90169370615e13ba6"
-    },
-    {
-      "quantity": 6,
-      "refItem": "66a930e53f61b00a8261d6f5",
-      "_id": "66abdfa90169370615e13ba7"
-    },
-    {
-      "quantity": 4,
-      "refItem": "66a930933f61b00a8261d6f4",
-      "_id": "66abe0040169370615e13bc3"
-    },
-    {
-      "quantity": 4,
-      "refItem": "66a9314e3f61b00a8261d6f8",
-      "_id": "66abe0040169370615e13bc4"
+      "item": "Voluntário"
     }
   ]
 }
@@ -125,23 +117,28 @@ Essa requisição irá retornar o centros comunitário informado pelo Id.
 
 ```json
 {
-  "name": "Center marvel",
+  "_id": "66ad6c5682b9e799fe9d1507",
+  "name": "Teste Center 1",
   "address": "example",
   "localization": "example",
-  "maxNumberPeople": 100,
-  "quantityPeopleOccupation": 10,
+  "maxNumberPeople": 20,
+  "quantityPeopleOccupation": 18,
   "resource": [
     {
+      "item": "Kit de suprimentos médicos",
+      "quantity": 99
+    },
+    {
+      "item": "Médico",
+      "quantity": 99
+    },
+    {
+      "quantity": 1,
+      "item": "Veículo de transporte"
+    },
+    {
       "quantity": 2,
-      "refItem": "66a930933f61b00a8261d6f4"
-    },
-    {
-      "quantity": 10,
-      "refItem": "66a930e53f61b00a8261d6f5"
-    },
-    {
-      "quantity": 5,
-      "refItem": "66a9314e3f61b00a8261d6f8"
+      "item": "Voluntário"
     }
   ]
 }
@@ -215,31 +212,31 @@ Significados das propriedades abaixo:
     <li><strong>resourceCCOne</strong> - recursos que o centro comunitário 1 está disposto a intercambiar </li>
     <li><strong>resourceCCTwo</strong> - recursos que o centro comunitário 2 está disposto a intercambiar </li>
     <li><strong>quantity</strong> - quantidade de recursos dispostos para o intercâmbio</li>
-    <li><strong>refItem</strong> - id do recurso</li>
+    <li><strong>item</strong> - nome do recurso</li>
 </ul>
 
 ```json
 {
-  "communityCenterOne": "66a94a6dac0e39d1d6882be1",
-  "communityCenterTwo": "66a9594e7c4db129fe34a3ba",
+  "communityCenterOne": "66ad6c5682b9e799fe9d1507",
+  "communityCenterTwo": "66ad6c8682b9e799fe9d150a",
   "resourceCCOne": [
     {
-      "quantity": 2,
-      "refItem": "66a930e53f61b00a8261d6f5"
+      "quantity": 1,
+      "item": "Médico"
     },
     {
       "quantity": 1,
-      "refItem": "66a931913f61b00a8261d6f9"
+      "item": "Kit de suprimentos médicos"
     }
   ],
   "resourceCCTwo": [
     {
       "quantity": 1,
-      "refItem": "66a930933f61b00a8261d6f4"
+      "item": "Veículo de transporte"
     },
     {
-      "quantity": 1,
-      "refItem": "66a9314e3f61b00a8261d6f8"
+      "quantity": 2,
+      "item": "Voluntário"
     }
   ]
 }
@@ -274,27 +271,28 @@ Significados das propriedades abaixo:
 ```json
 [
   {
-    "_id": "66a94a6dac0e39d1d6882be1",
-    "name": "Center Historic John Doe",
-    "address": "rua zero a esquerda",
-    "localization": "example hahaha",
-    "maxNumberPeople": 3,
-    "quantityPeopleOccupation": 2,
+    "_id": "66ad6c5682b9e799fe9d1507",
+    "name": "Teste Center 1",
+    "address": "example",
+    "localization": "example",
+    "maxNumberPeople": 20,
+    "quantityPeopleOccupation": 18,
     "resource": [
       {
-        "quantity": 5,
-        "refItem": "66a930e53f61b00a8261d6f5",
-        "_id": "66abdfa90169370615e13ba7"
+        "item": "Kit de suprimentos médicos",
+        "quantity": 99
       },
       {
-        "quantity": 5,
-        "refItem": "66a930933f61b00a8261d6f4",
-        "_id": "66abe0040169370615e13bc3"
+        "item": "Médico",
+        "quantity": 99
       },
       {
-        "quantity": 5,
-        "refItem": "66a9314e3f61b00a8261d6f8",
-        "_id": "66abe0040169370615e13bc4"
+        "quantity": 1,
+        "item": "Veículo de transporte"
+      },
+      {
+        "quantity": 2,
+        "item": "Voluntário"
       }
     ]
   }
@@ -312,7 +310,7 @@ Significados das propriedades abaixo:
 
 ```json
 {
-  "message": "6 Voluntário, 3 Médico, 3 Kit de suprimentos médicos, 6 Veículo de transporte, por centro."
+  "message": "6 Voluntário, 3 Médico, 3 Kit de suprimentos médicos, 6 Veículo de transporte, per center."
 }
 ```
 
@@ -345,7 +343,7 @@ Significados das propriedades da resposta:
     <li><strong>resourceExchangeCenterOne</strong> - lista de recursos cedidos pelo centro um </li>
     <li><strong>resourceExchangeCenterTwo</strong> - lista de recursos cedidos pelo centro dois</li>
     <li><strong>quantity</strong> - quantidade de itens cedidos</li>
-    <li><strong>refItem</strong> - id do item cedido</li>
+    <li><strong>item</strong> - nome do item cedido</li>
 </ul>
 
 <br/>
@@ -353,31 +351,32 @@ Significados das propriedades da resposta:
 ```json
 [
   {
-    "communityCenterOne": "66a94a6dac0e39d1d6882be1",
-    "communityCenterTwo": "66a9594e7c4db129fe34a3ba",
-    "dateExchange": "2024-08-02 07:38:01",
+    "_id": "66ad757b92f76360ef86d82d",
+    "communityCenterOne": "66ad6c5682b9e799fe9d1507",
+    "communityCenterTwo": "66ad6c8682b9e799fe9d150a",
+    "dateExchange": "2024-08-02T21:08:33-03:00",
     "resourceExchangeCenterOne": [
       {
-        "quantity": 2,
-        "refItem": "66a931913f61b00a8261d6f9",
-        "_id": "66acb72ac97b88837a992e59"
+        "quantity": 1,
+        "item": "Médico",
+        "_id": "66ad757b92f76360ef86d82e"
       },
       {
         "quantity": 1,
-        "refItem": "66a930e53f61b00a8261d6f5",
-        "_id": "66acb72ac97b88837a992e5a"
+        "item": "Kit de suprimentos médicos",
+        "_id": "66ad757b92f76360ef86d82f"
       }
     ],
     "resourceExchangeCenterTwo": [
       {
         "quantity": 1,
-        "refItem": "66a930933f61b00a8261d6f4",
-        "_id": "66acb72ac97b88837a992e5b"
+        "item": "Veículo de transporte",
+        "_id": "66ad757b92f76360ef86d830"
       },
       {
-        "quantity": 1,
-        "refItem": "66a9314e3f61b00a8261d6f8",
-        "_id": "66acb72ac97b88837a992e5c"
+        "quantity": 2,
+        "item": "Voluntário",
+        "_id": "66ad757b92f76360ef86d831"
       }
     ]
   }
@@ -403,53 +402,26 @@ Significados das propriedades da resposta:
 ```json
 [
   {
-    "_id": "66a930933f61b00a8261d6f4",
     "item": "Médico",
     "points": 4
   },
   {
-    "_id": "66a930e53f61b00a8261d6f5",
     "item": "Voluntário",
     "points": 3
   },
   {
-    "_id": "66a9314e3f61b00a8261d6f8",
     "item": "Kit de suprimentos médicos",
     "points": 7
   },
   {
-    "_id": "66a931913f61b00a8261d6f9",
     "item": "Veículo de transporte",
     "points": 5
   },
   {
-    "_id": "66a931bd3f61b00a8261d6fa",
     "item": "Cesta básica",
     "points": 2
   }
 ]
-```
-
-<br/>
-<br/>
-
-<hr/>
-<br/>
-
-<h2 align = "left"> Listar recurso por id</h2>
-
-`GET /resource/:id - FORMATO DA REQUISIÇÃO`
-
-<p>Esse endpoint retorna um recurso específico informado pelo id.</p>
-
-<br/>
-
-```json
-{
-  "_id": "66a9314e3f61b00a8261d6f8",
-  "item": "Kit de suprimentos médicos",
-  "points": 7
-}
 ```
 
 <br/>

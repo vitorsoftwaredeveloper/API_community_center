@@ -1,7 +1,7 @@
 import request from "supertest";
 import { afterEach, beforeEach, describe, expect } from "@jest/globals";
 import app from "../app";
-import { CENTER_ONE, CENTER_TWO, DATE_INITIAL_RUN } from "./mock";
+import { CENTER_ONE, CENTER_TWO } from "./mock";
 
 let servidor;
 let centerOneId;
@@ -36,26 +36,26 @@ describe("Test router historic", () => {
         resourceCCOne: [
           {
             quantity: 1,
-            refItem: "66a930933f61b00a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 1,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Médico",
           },
         ],
         resourceCCTwo: [
           {
             quantity: 1,
-            refItem: "66a930933f61b00a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 1,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Médico",
           },
         ],
       });
 
-    expect(response.body.message).toBe("Centro Comunitário inexistente!");
+    expect(response.body.message).toBe("No exists Community Center!");
   });
 
   it("Should be able to verify that the center IDs passed in the exchange are the same.", async () => {
@@ -67,27 +67,27 @@ describe("Test router historic", () => {
         resourceCCOne: [
           {
             quantity: 1,
-            refItem: "66a930933f61b00a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 1,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Médico",
           },
         ],
         resourceCCTwo: [
           {
             quantity: 1,
-            refItem: "66a930933f61b00a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 1,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Médico",
           },
         ],
       });
 
     expect(response.body.message).toBe(
-      "Centros comunitários iguais! Não é permitido realizar intercâmbio para a própria instituição."
+      "Equal community centers! It is not permitted to exchange for the institution itself."
     );
   });
 
@@ -100,27 +100,27 @@ describe("Test router historic", () => {
         resourceCCOne: [
           {
             quantity: 1,
-            refItem: "66a930933f61b20a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 1,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Kit de suprimentos médicos",
           },
         ],
         resourceCCTwo: [
           {
             quantity: 1,
-            refItem: "66a930933f61b00a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 1,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Médico",
           },
         ],
       });
 
     expect(response.body.message).toBe(
-      `Centro comunitário '${CENTER_ONE.name}' não possui alguns dos recursos para intercâmbio.`
+      `Insufficient quantity of items in the community center '${CENTER_ONE.name}'.`
     );
   });
 
@@ -133,27 +133,27 @@ describe("Test router historic", () => {
         resourceCCOne: [
           {
             quantity: 1,
-            refItem: "66a930933f61b20a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 1,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Médico",
           },
         ],
         resourceCCTwo: [
           {
             quantity: 1,
-            refItem: "66a930933f61b00a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 1,
-            refItem: "66a9314e3f61b00q8261d6f8",
+            item: "Kit de suprimentos médicos",
           },
         ],
       });
 
     expect(response.body.message).toBe(
-      `Centro comunitário '${CENTER_ONE.name}' não possui alguns dos recursos para intercâmbio.`
+      `Insufficient quantity of items in the community center '${CENTER_TWO.name}'.`
     );
   });
 
@@ -165,28 +165,28 @@ describe("Test router historic", () => {
         communityCenterTwo: centerTwoId,
         resourceCCOne: [
           {
-            quantity: 100,
-            refItem: "66a930933f61b00a8261d6f4",
+            quantity: 10000,
+            item: "Médico",
           },
           {
-            quantity: 100,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            quantity: 10000,
+            item: "Médico",
           },
         ],
         resourceCCTwo: [
           {
             quantity: 1,
-            refItem: "66a930933f61b00a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 1,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Médico",
           },
         ],
       });
 
     expect(response.body.message).toBe(
-      `Quantidade insuficiente de itens no centro comunitário '${CENTER_ONE.name}'.`
+      `Insufficient quantity of items in the community center '${CENTER_ONE.name}'.`
     );
   });
 
@@ -199,27 +199,27 @@ describe("Test router historic", () => {
         resourceCCOne: [
           {
             quantity: 1,
-            refItem: "66a930933f61b00a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 1,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Médico",
           },
         ],
         resourceCCTwo: [
           {
-            quantity: 100,
-            refItem: "66a930933f61b00a8261d6f4",
+            quantity: 10000,
+            item: "Médico",
           },
           {
-            quantity: 100,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            quantity: 10000,
+            item: "Médico",
           },
         ],
       });
 
     expect(response.body.message).toBe(
-      `Quantidade insuficiente de itens no centro comunitário '${CENTER_TWO.name}'.`
+      `Insufficient quantity of items in the community center '${CENTER_TWO.name}'.`
     );
   });
 
@@ -232,27 +232,27 @@ describe("Test router historic", () => {
         resourceCCOne: [
           {
             quantity: 1,
-            refItem: "66a930933f61b00a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 2,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Médico",
           },
         ],
         resourceCCTwo: [
           {
             quantity: 1,
-            refItem: "66a930933f61b00a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 1,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Médico",
           },
         ],
       });
 
     expect(response.body.message).toBe(
-      `Centros comunitários '${CENTER_ONE.name}' e '${CENTER_TWO.name}' não possuem recursos equiparáveis para intercâmbio!`
+      `Community center's '${CENTER_ONE.name}' and '${CENTER_TWO.name}' they do not have comparable resources for exchange!`
     );
   });
 
@@ -265,27 +265,27 @@ describe("Test router historic", () => {
         resourceCCOne: [
           {
             quantity: 1,
-            refItem: "66a930933f61b00a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 1,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Médico",
           },
         ],
         resourceCCTwo: [
           {
             quantity: 1,
-            refItem: "66a930933f61b00a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 1,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Médico",
           },
         ],
       });
 
     itemHistoricId = response.body.data._id;
-    expect(response.body.message).toBe("Intercâmbio realizado com sucesso!");
+    expect(response.body.message).toBe("Exchange carried out successfully!");
   });
 
   it("Should be possible to return, when removing the history item, 'Id with invalid format', as mongodb has a standard format.", async () => {

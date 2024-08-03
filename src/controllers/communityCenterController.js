@@ -1,5 +1,7 @@
 import { isValidObjectId } from "mongoose";
 import { communitycenter } from "../models/CommunityCenter.js";
+import { verifyIfAllItemListIsPresenceOtherList } from "../utils/index.js";
+import { resources } from "../constants/index.js";
 
 class CommunityCenterController {
   static listCommunityCenters = async (_, res) => {
@@ -28,6 +30,19 @@ class CommunityCenterController {
 
   static saveCommunityCenter = (req, res) => {
     const newCommunityCenter = new communitycenter(req.body);
+
+    const [itemsExists, itemsNotFound] = verifyIfAllItemListIsPresenceOtherList(
+      newCommunityCenter?.resource,
+      resources,
+      "item"
+    );
+
+    if (!itemsExists) {
+      return res.status(404).send({
+        message: "Alguns recursos não foram encontrados!",
+        data: itemsNotFound,
+      });
+    }
 
     newCommunityCenter.save((err) => {
       if (err) {
@@ -63,14 +78,14 @@ class CommunityCenterController {
     if (quantityPeopleOccupation) {
       return res.status(400).send({
         message:
-          "A propriedade quantityPeopleOccupation não pode ser atualizada nesse serviço, somente informações básicas como nome, endereço, etc.",
+          "The quantityPeopleOccupation property cannot be updated in this service, only basic information such as name, address, etc.",
       });
     }
 
     if (resource) {
       return res.status(400).send({
         message:
-          "A propriedade resource não pode ser atualizada nesse serviço, somente informações básicas como nome, endereço, etc.",
+          "The resource property cannot be updated in this service, only basic information such as name, address, etc.",
       });
     }
 
@@ -82,7 +97,7 @@ class CommunityCenterController {
       } else {
         return res
           .status(200)
-          .send({ message: "Centro comunitário atualizado com sucesso" });
+          .send({ message: "Community center successfully updated!" });
       }
     });
   };
@@ -105,7 +120,7 @@ class CommunityCenterController {
           } else {
             return communitycenter.findById(idCommunity).then((center) => {
               return res.status(200).send({
-                message: `Número de ocupantes atualizado com sucesso. Número de ocupantes: ${center.quantityPeopleOccupation}`,
+                message: `Number of occupants updated successfully, occupants: ${center.quantityPeopleOccupation}`,
               });
             });
           }
@@ -113,7 +128,9 @@ class CommunityCenterController {
       );
     } else {
       return res.status(400).send({
-        message: `Não é possível abrigar tantas pessoas assim! Este abrigo possui a quantidade máxima de ocupantes de : ${center.maxNumberPeople} pessoas e atualmente estamos abrigando ${center.quantityPeopleOccupation} pessoas. Procure outro centro comunitário!`,
+        message: `
+        It's not possible to house that many people! This shelter has the maximum number of occupants of : ${center.maxNumberPeople} 
+        people and we are currently housing ${center.quantityPeopleOccupation} pessoas. Procure outro centro comunitário!`,
       });
     }
   };

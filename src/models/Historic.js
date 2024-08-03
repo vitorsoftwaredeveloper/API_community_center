@@ -12,21 +12,13 @@ const historicSchema = mongoose.Schema(
     resourceCCOne: [
       {
         quantity: { type: Number },
-        refItem: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "resource",
-          required: true,
-        },
+        item: { type: String },
       },
     ],
     resourceCCTwo: [
       {
         quantity: { type: Number },
-        refItem: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "resource",
-          required: true,
-        },
+        item: { type: String },
       },
     ],
   },

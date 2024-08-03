@@ -5,37 +5,37 @@ const DATE_INITIAL_RUN = new Date()
   .join(" ");
 
 const CENTER_ONE = {
-  name: "Integration Test Center 2",
+  name: "Integration Test Center 1",
   address: "example",
   localization: "example",
   maxNumberPeople: 10,
-  quantityPeopleOccupation: 0,
+  quantityPeopleOccupation: 9,
   resource: [
     {
       quantity: 10,
-      refItem: "66a930933f61b00a8261d6f4",
+      item: "Médico",
     },
     {
       quantity: 10,
-      refItem: "66a9314e3f61b00a8261d6f8",
+      item: "Médico",
     },
   ],
 };
 
 const CENTER_TWO = {
-  name: "Integration Test Center 1",
+  name: "Integration Test Center 2",
   address: "example",
   localization: "example",
   maxNumberPeople: 10,
-  quantityPeopleOccupation: 0,
+  quantityPeopleOccupation: 9,
   resource: [
     {
       quantity: 10,
-      refItem: "66a930933f61b00a8261d6f4",
+      item: "Médico",
     },
     {
       quantity: 10,
-      refItem: "66a9314e3f61b00a8261d6f8",
+      item: "Médico",
     },
   ],
 };

@@ -31,11 +31,11 @@ describe("Test router communitycenter", () => {
         resource: [
           {
             quantity: 10,
-            refItem: "66a930933f61b00a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 10,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Médico",
           },
         ],
       })
@@ -87,36 +87,36 @@ describe("Test router communitycenter", () => {
       .expect(400);
   });
 
-  it("Ss", async () => {
+  it("Should be able to return that the quantityPeopleOccupation property cannot be updated.", async () => {
     const response = await request(app)
       .put(`/communitycenter/${idCenter}`)
       .send({ quantityPeopleOccupation: 12 })
       .expect(400);
 
     expect(response.body.message).toBe(
-      "A propriedade quantityPeopleOccupation não pode ser atualizada nesse serviço, somente informações básicas como nome, endereço, etc."
+      "The quantityPeopleOccupation property cannot be updated in this service, only basic information such as name, address, etc."
     );
   });
 
-  it("Ss", async () => {
+  it("Should be able to return that the resource property cannot be updated.", async () => {
     const response = await request(app)
       .put(`/communitycenter/${idCenter}`)
       .send({
         resource: [
           {
             quantity: 10,
-            refItem: "66a930933f61b00a8261d6f4",
+            item: "Médico",
           },
           {
             quantity: 10,
-            refItem: "66a9314e3f61b00a8261d6f8",
+            item: "Médico",
           },
         ],
       })
       .expect(400);
 
     expect(response.body.message).toBe(
-      "A propriedade resource não pode ser atualizada nesse serviço, somente informações básicas como nome, endereço, etc."
+      "The resource property cannot be updated in this service, only basic information such as name, address, etc."
     );
   });
 

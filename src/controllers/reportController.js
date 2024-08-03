@@ -1,8 +1,8 @@
 import { isValidObjectId } from "mongoose";
 import { communitycenter } from "../models/CommunityCenter.js";
-import { resource } from "../models/Resource.js";
 import moment from "moment-timezone";
 import { historic } from "../models/Historic.js";
+import { resources } from "../constants/index.js";
 
 class ReportController {
   static listCommunityCentersOccupationStuffed = async (_, res) => {
@@ -14,11 +14,7 @@ class ReportController {
           center.maxNumberPeople * 0.9
         );
 
-        const percentageOccupancyCenter = Math.ceil(
-          center.quantityPeopleOccupation * 0.9
-        );
-
-        return percentageOccupancyCenter >= percentageAcceptableCenter;
+        return center.quantityPeopleOccupation >= percentageAcceptableCenter;
       })
     );
   };
@@ -27,30 +23,28 @@ class ReportController {
     const listCenter = await communitycenter.find({});
 
     if (listCenter.length === 0) {
-      return res.status(400).send({ message: "Não há centros cadastrados!" });
+      return res
+        .status(400)
+        .send({ message: "There are no registered centers!" });
     }
 
-    const listItems = {};
-
-    listCenter.forEach((center) => {
-      center.resource.forEach((resource) => {
-        if (listItems[`${resource.refItem}`] === undefined) {
-          listItems[`${resource.refItem}`] = resource.quantity;
-        } else {
-          listItems[`${resource.refItem}`] += resource.quantity;
-        }
-      });
+    const listCenterSumPointsItems = listCenter.map((center) => {
+      return center.resource;
     });
 
-    const listResource = await resource
-      .find()
-      .where("_id")
-      .in(Object.keys(listItems));
+    const listItems = {};
+    listCenterSumPointsItems.flat().forEach((resource) => {
+      if (listItems[`${resource.item}`] === undefined) {
+        listItems[`${resource.item}`] = resource.quantity;
+      } else {
+        listItems[`${resource.item}`] += resource.quantity;
+      }
+    });
 
     const formatListAverage = [];
 
     for (const [key, value] of Object.entries(listItems)) {
-      const resource = listResource.find((item) => key === item._id.toString());
+      const resource = resources.find((element) => key === element.item);
 
       formatListAverage.push({
         item: resource.item,
@@ -64,7 +58,7 @@ class ReportController {
 
     return res
       .status(200)
-      .send({ message: formatStringResponse.trim() + " por centro." });
+      .send({ message: formatStringResponse.trim() + " per center." });
   };
 
   static listHistoricByCenterId = async (req, res) => {
@@ -78,7 +72,7 @@ class ReportController {
     if (isNaN(new Date(date).getFullYear())) {
       return res.status(400).send({
         message:
-          "Formato de data inválido, utilize o seguinte padrão yyyy-MM-dd hh:mm:ss",
+          "Invalid date format, use the following pattern yyyy-MM-dd hh:mm:ss",
       });
     }
 

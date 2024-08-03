@@ -1,22 +1,17 @@
 import { historic } from "../models/Historic.js";
 import { communitycenter } from "../models/CommunityCenter.js";
-import { resource } from "../models/Resource.js";
 import CommunityCenterController from "./communityCenterController.js";
 import { isValidObjectId } from "mongoose";
+import { verifyIfAllItemListIsPresenceOtherList } from "../utils/index.js";
+import { resources } from "../constants/index.js";
 
 class ExchangeController {
-  static convertObjectIdFromString = (item) => {
-    return item.toString();
-  };
-
   static addResourceReceveid = (listResourceRequested, center) => {
     const resourceNotFoundInTheCenter = [];
 
     listResourceRequested.forEach((resourceExchange) => {
       const indexElement = center.resource.findIndex(
-        (resourceCenter) =>
-          this.convertObjectIdFromString(resourceCenter.refItem) ===
-          resourceExchange.refItem
+        (resourceCenter) => resourceCenter.item === resourceExchange.item
       );
 
       if (indexElement !== -1) {
@@ -35,9 +30,7 @@ class ExchangeController {
   static subtractResourceExchange = (listResourceRequested, center) => {
     listResourceRequested.forEach((resourceRequested) => {
       const indexElement = center.resource.findIndex(
-        (resourceCenter) =>
-          this.convertObjectIdFromString(resourceCenter.refItem) ===
-          resourceRequested.refItem
+        (resourceCenter) => resourceCenter.item === resourceRequested.item
       );
 
       if (indexElement !== -1) {
@@ -50,24 +43,23 @@ class ExchangeController {
     });
   };
 
-  static sumTotalPointsItemsByRequested = async (
-    listResourceExchangeIds,
-    itemsRequested
-  ) => {
-    return (
-      await resource.find().where("_id").in(listResourceExchangeIds)
-    ).reduce((acc, resource, index) => {
-      return (acc += resource.points * itemsRequested[index].quantity);
-    }, 0);
-  };
+  static sumTotalPointsItemsByRequested = (itemsRequested) => {
+    const listSum = [];
+    itemsRequested.forEach((resource) => {
+      const element = resources.find(
+        (element) => element.item === resource.item
+      );
 
-  static verifyIfCenterHasItems = (
-    listResourceExchangeIds,
-    centerListResource
-  ) => {
-    return listResourceExchangeIds.filter((item) => {
-      return centerListResource.some((resource) => resource === item);
+      if (element) {
+        listSum.push(element);
+      }
     });
+
+    return listSum.reduce((acc, resource, index) => {
+      const multiplyPointsQuantity =
+        resource.points * itemsRequested[index].quantity;
+      return (acc += multiplyPointsQuantity);
+    }, 0);
   };
 
   static verifyIfCenterHasQuantityAvailableItemsRequested = (
@@ -78,17 +70,28 @@ class ExchangeController {
 
     listRequested.forEach((requestedResource) => {
       const searchResourceAvailable = center.resource.find(
-        (resourceCenter) =>
-          this.convertObjectIdFromString(resourceCenter.refItem) ===
-          requestedResource.refItem
+        (resourceCenter) => resourceCenter.item === requestedResource.item
       );
 
-      if (requestedResource.quantity > searchResourceAvailable.quantity) {
+      if (
+        !searchResourceAvailable ||
+        requestedResource.quantity > searchResourceAvailable.quantity
+      ) {
         hasItems = false;
       }
     });
 
     return hasItems;
+  };
+
+  static verifyIfItemsExists = (centerItems) => {
+    let [itemsExists, itemsNotFound] = verifyIfAllItemListIsPresenceOtherList(
+      centerItems,
+      resources,
+      "item"
+    );
+
+    return [itemsExists, itemsNotFound];
   };
 
   static makeExchangeBetweenCommunityCenter = async (req, res) => {
@@ -104,17 +107,13 @@ class ExchangeController {
     const centerOne = await communitycenter.findById(communityCenterOneId);
 
     if (!centerOne) {
-      return res
-        .status(404)
-        .send({ message: "Centro Comunitário inexistente!" });
+      return res.status(404).send({ message: "No exists Community Center!" });
     }
 
     const centerTwo = await communitycenter.findById(communityCenterTwoId);
 
     if (!centerTwo) {
-      return res
-        .status(404)
-        .send({ message: "Centro Comunitário inexistente!" });
+      return res.status(404).send({ message: "No exists Community Center!" });
     }
 
     // preciso verificar se é o mesmo id, não faz sentido fazer intercambio para o mesmo lugar
@@ -122,47 +121,27 @@ class ExchangeController {
     if (communityCenterOneId === communityCenterTwoId) {
       return res.status(400).send({
         message:
-          "Centros comunitários iguais! Não é permitido realizar intercâmbio para a própria instituição.",
+          "Equal community centers! It is not permitted to exchange for the institution itself.",
       });
     }
 
-    // preciso verificar se os centros possuem os recursos
+    // preciso verificar se os itens no intercâmbio existem
 
-    const listResourceByCommunityCenterOneIds = centerOne.resource.map((item) =>
-      this.convertObjectIdFromString(item.refItem)
-    );
+    let [itemsExists, itemsNotFound] = this.verifyIfItemsExists(resourceCCOne);
 
-    const listResourceExchangeOneIds = resourceCCOne.map(
-      (item) => item.refItem
-    );
-
-    const listResourceByCommunityCenterTwoIds = centerTwo.resource.map((item) =>
-      this.convertObjectIdFromString(item.refItem)
-    );
-
-    const listResourceExchangeTwoIds = resourceCCTwo.map(
-      (item) => item.refItem
-    );
-
-    const centerOneHasItemsByExchange = this.verifyIfCenterHasItems(
-      listResourceExchangeOneIds,
-      listResourceByCommunityCenterOneIds
-    );
-
-    const centerTwoHasItemsByExchange = this.verifyIfCenterHasItems(
-      listResourceExchangeTwoIds,
-      listResourceByCommunityCenterTwoIds
-    );
-
-    if (centerOneHasItemsByExchange.length !== resourceCCOne.length) {
+    if (!itemsExists) {
       return res.status(404).send({
-        message: `Centro comunitário '${centerOne.name}' não possui alguns dos recursos para intercâmbio.`,
+        message: `Community center '${centerOne.name}' does not have some of the resources for exchange. `,
+        data: itemsNotFound,
       });
     }
 
-    if (centerTwoHasItemsByExchange.length !== resourceCCTwo.length) {
+    [itemsExists, itemsNotFound] = this.verifyIfItemsExists(resourceCCTwo);
+
+    if (!itemsExists) {
       return res.status(404).send({
-        message: `Centro comunitário '${centerTwo.name}' não possui alguns dos recursos para intercâmbio.`,
+        message: `Community center '${centerTwo.name}' does not have some of the resources for exchange.`,
+        data: itemsNotFound,
       });
     }
 
@@ -178,7 +157,7 @@ class ExchangeController {
 
     if (!veriryIfQuantityItemsIsAvailable) {
       return res.status(400).send({
-        message: `Quantidade insuficiente de itens no centro comunitário '${centerOne.name}'.`,
+        message: `Insufficient quantity of items in the community center '${centerOne.name}'.`,
       });
     }
 
@@ -190,51 +169,44 @@ class ExchangeController {
 
     if (!veriryIfQuantityItemsIsAvailable) {
       return res.status(400).send({
-        message: `Quantidade insuficiente de itens no centro comunitário '${centerTwo.name}'.`,
+        message: `Insufficient quantity of items in the community center '${centerTwo.name}'.`,
       });
     }
 
     // preciso verificar se a soma dos pontos dos itens solicitados são equiparáveis
 
     const sumPointsExchangeCenterOne =
-      await this.sumTotalPointsItemsByRequested(
-        listResourceExchangeOneIds,
-        resourceCCOne
-      );
+      this.sumTotalPointsItemsByRequested(resourceCCOne);
 
     const sumPointsExchangeCenterTwo =
-      await this.sumTotalPointsItemsByRequested(
-        listResourceExchangeTwoIds,
-        resourceCCTwo
-      );
+      this.sumTotalPointsItemsByRequested(resourceCCTwo);
 
     // se o centro possuir sua ocupação maior que 90% ele pode efetuar o intercâmbio sem levar em consideração a soma dos pontos dos itens solicitados
 
-    const percentageAcceptableCenterOne = parseInt(
+    const percentageAcceptableCenterOne = Math.ceil(
       centerOne.maxNumberPeople * 0.9
     );
-    const percentageAcceptableCenterTwo = parseInt(
+    const percentageAcceptableCenterTwo = Math.ceil(
       centerTwo.maxNumberPeople * 0.9
     );
 
-    const percentageOccupancyCenterOne = parseInt(
+    const percentageOccupancyCenterOne = Math.ceil(
       centerOne.quantityPeopleOccupation * 0.9
     );
-    const percentageOccupancyCenterTwo = parseInt(
+    const percentageOccupancyCenterTwo = Math.ceil(
       centerTwo.quantityPeopleOccupation * 0.9
     );
 
-    const ignoreSumPointsFromItemsIfCenterHas90PercentageOccupation =
+    const notIgnoreSumPointsFromItemsIfCenterHas90PercentageOccupation =
       percentageOccupancyCenterOne >= percentageAcceptableCenterOne ||
       percentageOccupancyCenterTwo >= percentageAcceptableCenterTwo;
 
-    if (
-      !ignoreSumPointsFromItemsIfCenterHas90PercentageOccupation &&
-      sumPointsExchangeCenterOne !== sumPointsExchangeCenterTwo
-    ) {
-      return res.status(400).send({
-        message: `Centros comunitários '${centerOne.name}' e '${centerTwo.name}' não possuem recursos equiparáveis para intercâmbio!`,
-      });
+    if (sumPointsExchangeCenterOne !== sumPointsExchangeCenterTwo) {
+      if (notIgnoreSumPointsFromItemsIfCenterHas90PercentageOccupation) {
+        return res.status(400).send({
+          message: `Community center's '${centerOne.name}' and '${centerTwo.name}' they do not have comparable resources for exchange!`,
+        });
+      }
     }
 
     // decrescer a quantidade de itens que sairão o centro comunitário
@@ -262,7 +234,7 @@ class ExchangeController {
         });
       } else {
         return res.status(200).json({
-          message: "Intercâmbio realizado com sucesso!",
+          message: "Exchange carried out successfully!",
           data: itemHistoric,
         });
       }

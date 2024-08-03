@@ -30,32 +30,26 @@ describe("Test router resource", () => {
         points: element.points,
       }))
     ).toMatchObject([
-      { item: "Médico", points: 4 },
-      { item: "Voluntário", points: 3 },
       {
         item: "Kit de suprimentos médicos",
         points: 7,
       },
       {
+        item: "Voluntário",
+        points: 3,
+      },
+      {
+        item: "Médico",
+        points: 4,
+      },
+      {
         item: "Veículo de transporte",
         points: 5,
       },
-      { item: "Cesta básica", points: 2 },
+      {
+        item: "Cesta básica",
+        points: 2,
+      },
     ]);
-  });
-
-  it("Should be possible to return, when searching for a resource, 'Id with invalid format', as mongodb has a standard format.", async () => {
-    const response = await request(app).get(`/resource/232`).expect(400);
-
-    expect(response.body.message).toBe("Format id incorrect!");
-  });
-
-  it("Should be be able to return a resource stating the id.", async () => {
-    const response = await request(app).get(
-      `/resource/66a930933f61b00a8261d6f4`
-    );
-
-    expect(response.body.item).toBe("Médico");
-    expect(response.body.points).toBe(4);
   });
 });
