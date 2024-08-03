@@ -1,4 +1,4 @@
-// Crie um novo arquivo igual este, chamado env.js e insira as credenciais de acesso,
-// pois será esse arquivo que o a configuração do banco de dados utilizará
+// - crie um novo arquivo igual este nesse mesmo diretório chamado env.js
+// - insira as credenciais de acesso, pois será esse arquivo que a configuração do banco de dados utilizará
 
 export const credentials = { password: ",", username: "" };
